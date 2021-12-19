@@ -29,4 +29,4 @@ To get started, you can run:
     ./build/multi_reader_async/multi_reader_async_read_only_demo    
 
 ## Acknowledgements
-Thanks to @kyotov for discussions and ideas on potential usage patterns, suggestions for different experiments, cmake build sample code, and recommendations on specific language features.
+Thanks to [Kamen](https://github.com/kyotov) for discussions and ideas on potential usage patterns, suggestions for different experiments, cmake build sample code, and recommendations on specific language features.
