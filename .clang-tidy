@@ -8,7 +8,6 @@ Checks: >
   -altera-struct-pack-align,
   -misc-no-recursion,
   -readability-magic-numbers,
-  -google-runtime-references,
   -llvm-header-guard  
   
 
@@ -28,4 +27,3 @@ WarningsAsErrors: "*"
 
 # readability-magic-numbers considered dup with 
 #   cppcoreguidelines-avoid-magic-numbers 
-# google-runtime-references disabled temporarily pending style finalization

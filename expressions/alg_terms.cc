@@ -12,13 +12,13 @@ namespace code_experiments {
 static void AppendKeys(
     const std::map<std::string, int> &from_map,
     const std::string &delim_after_first,
-    std::string &to_string) {
+    std::string *to_string) {
   std::string delim;
   for (const auto &element : from_map) {
-    to_string.append(delim);
-    to_string.append(element.first);
+    to_string->append(delim);
+    to_string->append(element.first);
     if (element.second != 1) {
-      to_string.append("^" + std::to_string(element.second));
+      to_string->append("^" + std::to_string(element.second));
     }
     delim = delim_after_first;
   };
@@ -26,12 +26,12 @@ static void AppendKeys(
 
 static void AddMaps(
     const std::map<std::string, int> &to_add,
-    std::map<std::string, int> &into) {
+    std::map<std::string, int> *into) {
   for (const auto &element : to_add) {
-    if (into.find(element.first) != into.end()) {
-      into[element.first] += element.second;
+    if (into->find(element.first) != into->end()) {
+      (*into)[element.first] += element.second;
     } else {
-      into[element.first] = element.second;
+      (*into)[element.first] = element.second;
     }
   }
 }
@@ -56,13 +56,13 @@ AlgTerm::AlgTerm(const std::string &init_term)
 
 std::string AlgTerm::GetRawExpr() const {
   std::string raw_expr;
-  AppendKeys(numerator_, "*", raw_expr);
+  AppendKeys(numerator_, "*", &raw_expr);
   if (!denominator_.empty()) {
     raw_expr.append("/");
     if (denominator_.size() > 1) {
       raw_expr.append("(");
     }
-    AppendKeys(denominator_, "*", raw_expr);
+    AppendKeys(denominator_, "*", &raw_expr);
     if (denominator_.size() > 1) {
       raw_expr.append(")");
     }
@@ -88,8 +88,8 @@ AlgTerm AlgTerm::NegativeForm() const {
 
 void AlgTerm::operator*=(const AlgTerm &right) {
   coeff_ *= right.coeff_;
-  AddMaps(right.numerator_, numerator_);
-  AddMaps(right.denominator_, denominator_);
+  AddMaps(right.numerator_, &numerator_);
+  AddMaps(right.denominator_, &denominator_);
   is_negative_ = is_negative_ != right.is_negative_;
   // NOTE: This currently does not simplify across numerator and denominator.
   // It also does not simplify x^0 to 1.
@@ -208,4 +208,4 @@ std::string AlgTerms::ToString() const {
   return return_value;
 }
 
-} // namespace code_experiments
+}  // namespace code_experiments

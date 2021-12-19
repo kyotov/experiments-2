@@ -16,10 +16,10 @@ TEST_F(PrimesTests, DerefCheck) {  // NOLINT
 }
 
 void ValidateSequence(
-    PrimeNumbers &primes,
+    PrimeNumbers *primes,
     const std::vector<int> &expected) {  // NOLINT
   int index_expected = 0;
-  for (auto x : primes) {
+  for (auto x : (*primes)) {
     LOG(INFO) << "Iterator value: " << x;
     EXPECT_EQ(x, expected[index_expected]);
     index_expected++;
@@ -31,7 +31,7 @@ void ValidateSequence(
 
 TEST_F(PrimesTests, SimpleSequenceCheck) {  // NOLINT
   PrimeNumbers primes;
-  ValidateSequence(primes, expected_primes);
+  ValidateSequence(&primes, expected_primes);
 }
 
 TEST_F(PrimesTests, TwoSequencesCheck) {  // NOLINT
@@ -40,8 +40,8 @@ TEST_F(PrimesTests, TwoSequencesCheck) {  // NOLINT
       3,
       5};  // NOLINT(cppcoreguidelines-avoid-magic-numbers)
   PrimeNumbers primes;
-  ValidateSequence(primes, small_seq);
-  ValidateSequence(primes, expected_primes);
+  ValidateSequence(&primes, small_seq);
+  ValidateSequence(&primes, expected_primes);
 }
 
 TEST_F(PrimesTests, RegularUpdateCheck) {  // NOLINT
