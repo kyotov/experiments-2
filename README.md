@@ -17,7 +17,7 @@ Some additional examples were also tried in an attempt to identify whether C++ a
 ## Getting started
 To get started, you can run:
 1. Checkout this codebase, for example by running:
-    `git clone https://github.com/ashishvthakkar/experiments.git`
+    ```git clone https://github.com/ashishvthakkar/experiments.git```
 2. If you don't already have clang-tidy, install it, for example by running:
     sudo apt install clang-tidy
     You may have to run sudo apt update before running the install
