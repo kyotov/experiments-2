@@ -14,4 +14,4 @@ Some additional examples were also tried in an attempt to identify whether C++ a
 3. Simple example of using async to run multiple threads in parallel, all acting on and reading from the same input state. (multi_reader_async/)
 
 
-Acknowledgements: Thanks to @kyotov for discussions and ideas on potential usage patterns, suggestions for different experiments, and recommendations on specific language features.
+Acknowledgements: Thanks to @kyotov for discussions and ideas on potential usage patterns, suggestions for different experiments, cmake build sample code, and recommendations on specific language features.
