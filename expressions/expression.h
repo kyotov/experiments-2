@@ -12,7 +12,7 @@ public:
   [[nodiscard]] T Eval() const;
 
 private:
-  [[nodiscard]] int GetOperatorIndex(int *exp_operator_index) const;
+  [[nodiscard]] int GetOperatorIndex(int &exp_operator_index) const;
   [[nodiscard]] bool HasEnclosingParens() const;
   [[nodiscard]] T GetSimplifiedVal() const;
 

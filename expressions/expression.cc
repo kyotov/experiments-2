@@ -8,8 +8,8 @@
 namespace code_experiments {
 
 template <typename T>
-int Expression<T>::GetOperatorIndex(int *exp_operator_index) const {
-  *exp_operator_index = -1;
+int Expression<T>::GetOperatorIndex(int &exp_operator_index) const {
+  exp_operator_index = -1;
   int mul_div_index = -1;
   int num_open_params = 0;
   for (int i = expr_.size() - 1; i >= 0; i--) {
@@ -19,7 +19,7 @@ int Expression<T>::GetOperatorIndex(int *exp_operator_index) const {
     if (num_open_params == 0 && (expr_[i] == '*' || expr_[i] == '/')) {
       mul_div_index = i;
     } else if (num_open_params == 0 && expr_[i] == '^') {
-      *exp_operator_index = i;
+      exp_operator_index = i;
     } else if (expr_[i] == ')') {
       num_open_params++;
     } else if (expr_[i] == '(') {
@@ -47,7 +47,7 @@ T Expression<T>::GetSimplifiedVal() const {
 template <typename T>
 T Expression<T>::Eval() const {
   int exp_operator_index = -1;
-  int op_index = GetOperatorIndex(&exp_operator_index);
+  int op_index = GetOperatorIndex(exp_operator_index);
   if (op_index != -1) {
     return OperatorNode<T>(
                expr_.substr(0, op_index),
