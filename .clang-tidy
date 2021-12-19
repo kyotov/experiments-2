@@ -26,6 +26,12 @@ CheckOptions:
 
 WarningsAsErrors: "*"
 
-# readability-magic-numbers considered dup with 
+# Disabled readability-magic-numbers as it is considered dup with 
 #   cppcoreguidelines-avoid-magic-numbers 
-# google-runtime-references disabled temporarily pending style finalization
+# Disabled google-runtime-references disabled as this seems to conflict with 
+#   the style guide (https://google.github.io/styleguide/cppguide.html) 
+#   which says (as of 12/19/2021):
+#     Non-optional input parameters should usually be values or const 
+#     references, while non-optional output and input/output parameters should 
+#     usually be references (which cannot be null)... Use non-const pointers 
+#     to represent optional outputs and optional input/output parameters. 
