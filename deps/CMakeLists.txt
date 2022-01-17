@@ -31,3 +31,17 @@ ExternalProject_add(glog
     -DBUILD_TESTING=FALSE
 
     DEPENDS gflags)
+
+# Fetch googletest
+ExternalProject_add(
+  GTest
+  GIT_REPOSITORY https://github.com/google/googletest.git
+  GIT_TAG e2239ee6043f73722e7aa812a459f54a28552929 # v1.11.0
+
+  CMAKE_ARGS
+  # the next two are standard and needed for all deps
+  -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
+  -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_BINARY_DIR}/install/GTest
+)
+# For Windows: Prevent overriding the parent project's compiler/linker settings
+set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)

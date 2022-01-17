@@ -5,18 +5,6 @@ project(experiments VERSION 0.1.0)
 include(CTest)
 enable_testing()
 
-# Fetch googletest
-include(FetchContent)
-FetchContent_Declare(
-  googletest
-  GIT_REPOSITORY https://github.com/google/googletest.git
-  GIT_TAG e2239ee6043f73722e7aa812a459f54a28552929 # v1.11.0
-)
-# For Windows: Prevent overriding the parent project's compiler/linker settings
-set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
-FetchContent_MakeAvailable(googletest)
-include(GoogleTest)
-
 # Configure top level cmake for deps, then build and install all deps
 # The below calls can potentially be optimized 
 execute_process(COMMAND ${CMAKE_COMMAND} -S ${CMAKE_SOURCE_DIR}/deps -B ${CMAKE_BINARY_DIR}/deps -D CMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE})
@@ -27,9 +15,12 @@ execute_process(COMMAND ${CMAKE_COMMAND} --build ${CMAKE_BINARY_DIR}/deps --conf
 list(APPEND CMAKE_PREFIX_PATH 
     ${CMAKE_BINARY_DIR}/deps/install/gflags
     ${CMAKE_BINARY_DIR}/deps/install/glog
+    ${CMAKE_BINARY_DIR}/deps/install/GTest
 )
 find_package(gflags REQUIRED NO_MODULE)
 find_package(glog REQUIRED NO_MODULE)
+find_package(GTest REQUIRED NO_MODULE)
+include(GoogleTest)
 
 # Specify settings for clang-tidy
 string(REGEX REPLACE "[\\\\|/]" "[\\\\/]" HEADERS "${CMAKE_BINARY_DIR}/../.*")
