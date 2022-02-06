@@ -23,6 +23,7 @@ public:
 private:
   [[nodiscard]] int GetOperatorIndex(const std::string& expr) const;
   [[nodiscard]] T ParseAndEvaluate(const std::string& expr);
+  [[nodiscard]] T GetSimplifiedVal(const std::string& expr) const;
 
   T result_;
   std::unique_ptr<OperatorNode<T>> operator_node_cache_;

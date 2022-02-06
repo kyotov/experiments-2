@@ -13,7 +13,7 @@ DEFINE_string(expression, "", "Specify expression");  // NOLINT
 int main(int argc, char **argv) {
   gflags::ParseCommandLineFlags(&argc, &argv, true);
 
-  code_experiments::Expression<int> expr(FLAGS_expression);
+  code_experiments::Expression<double> expr(FLAGS_expression);
   LOG(INFO) << FLAGS_expression << " = " << expr.Eval();
   expr.PrintAsTree(0);
   LOG(INFO) << expr.ToStringWithParen();

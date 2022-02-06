@@ -40,5 +40,6 @@ std::string OperatorNode<T>::ToStringWithParen() {
 }
 
 template class OperatorNode<int>;
+template class OperatorNode<double>;
 
 }  // namespace code_experiments

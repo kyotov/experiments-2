@@ -45,7 +45,17 @@ T Expression<T>::ParseAndEvaluate(const std::string& expr) {
         expr.substr(op_index + 1));
     return operator_node_cache_->Eval();
   }
+  return GetSimplifiedVal(expr);
+}
+
+template <typename T>
+T Expression<T>::GetSimplifiedVal(const std::string& expr) const {
   return expr.empty() ? 0 : std::stoi(expr);
+}
+
+template <>
+double Expression<double>::GetSimplifiedVal(const std::string& expr) const {
+  return expr.empty() ? 0.0 : std::stod(expr);
 }
 
 template <typename T>
@@ -66,5 +76,6 @@ std::string Expression<T>::ToStringWithParen() {
 }
 
 template class Expression<int>;
+template class Expression<double>;
 
 }  // namespace code_experiments
