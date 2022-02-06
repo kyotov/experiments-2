@@ -34,6 +34,8 @@ add_subdirectory(iterators)
 add_subdirectory(code_checks)
 add_subdirectory(type_size_optimizations)
 add_subdirectory(multi_reader_async)
+add_subdirectory(expressions2)
+add_subdirectory(runtime_to_compiletime)
 
 add_executable(example main.cc)
 target_link_libraries(example
