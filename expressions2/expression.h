@@ -15,10 +15,8 @@ class OperatorNode;
 template <typename T>
 class Expression {
 public:
-  explicit Expression(const std::string& expr) : operator_node_cache_(nullptr) {
-    result_ = ParseAndEvaluate(expr);
-  }
-  [[nodiscard]] T Eval() { return result_; }
+  explicit Expression(const std::string& expr);
+  [[nodiscard]] T Eval();
   void PrintAsTree(int indent);
   std::string ToStringWithParen();
 

@@ -7,6 +7,17 @@
 namespace code_experiments {
 
 template <typename T>
+Expression<T>::Expression(const std::string& expr)
+    : operator_node_cache_(nullptr) {
+  result_ = ParseAndEvaluate(expr);
+}
+
+template <typename T>
+T Expression<T>::Eval() {
+  return result_;
+}
+
+template <typename T>
 int Expression<T>::GetOperatorIndex(const std::string& expr) const {
   int exp_operator_index = -1;
   int mul_div_index = -1;
