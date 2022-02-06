@@ -2,19 +2,22 @@
 
 #include <glog/logging.h>
 
+#include "../cast_utils/cast_utils.h"
+
 namespace code_experiments {
 
 template <typename T>
-int Expression<T>::GetOperatorIndex() const {
+int Expression<T>::GetOperatorIndex(const std::string& expr) const {
   int exp_operator_index = -1;
   int mul_div_index = -1;
-  for (int i = expr_.size() - 1; i >= 0; i--) {
-    if (expr_[i] == '+' || expr_[i] == '-') {
+  int size = CheckedNumericCast<uint64_t, int>(expr.size());
+  for (int i = size - 1; i >= 0; i--) {
+    if (expr[i] == '+' || expr[i] == '-') {
       return i;
     }
-    if (expr_[i] == '*' || expr_[i] == '/') {
+    if (expr[i] == '*' || expr[i] == '/') {
       mul_div_index = i;
-    } else if (expr_[i] == '^') {
+    } else if (expr[i] == '^') {
       exp_operator_index = i;
     }
   }
@@ -22,16 +25,16 @@ int Expression<T>::GetOperatorIndex() const {
 }
 
 template <typename T>
-T Expression<T>::ParseAndEvaluate() {
-  int op_index = GetOperatorIndex();
+T Expression<T>::ParseAndEvaluate(const std::string& expr) {
+  int op_index = GetOperatorIndex(expr);
   if (op_index != -1) {
     operator_node_cache_ = std::make_unique<OperatorNode<T>>(
-        expr_.substr(0, op_index),
-        expr_[op_index],
-        expr_.substr(op_index + 1));
+        expr.substr(0, op_index),
+        expr[op_index],
+        expr.substr(op_index + 1));
     return operator_node_cache_->Eval();
   }
-  return expr_.empty() ? 0 : std::stoi(expr_);
+  return expr.empty() ? 0 : std::stoi(expr);
 }
 
 template <typename T>
@@ -39,7 +42,7 @@ void Expression<T>::PrintAsTree(int indent) {
   if (operator_node_cache_ != nullptr) {
     operator_node_cache_->PrintAsTree(indent);
   } else {
-    std::cout << std::string(indent, ' ') << expr_ << std::endl;
+    std::cout << std::string(indent, ' ') << result_ << std::endl;
   }
 }
 
@@ -48,7 +51,7 @@ std::string Expression<T>::ToStringWithParen() {
   if (operator_node_cache_ != nullptr) {
     return operator_node_cache_->ToStringWithParen();
   }
-  return "(" + expr_ + ")";
+  return "(" + std::to_string(result_) + ")";
 }
 
 template class Expression<int>;
