@@ -8,13 +8,17 @@ namespace code_experiments {
 
 template <typename T>
 Expression<T>::Expression(const std::string& expr)
-    : operator_node_cache_(nullptr) {
-  result_ = ParseAndEvaluate(expr);
+    : simplified_value_(-1),
+      operator_node_cache_(nullptr) {
+  Parse(expr);
 }
 
 template <typename T>
 T Expression<T>::Eval() {
-  return result_;
+  if (operator_node_cache_ != nullptr) {
+    return operator_node_cache_->Eval();
+  }
+  return simplified_value_;
 }
 
 template <typename T>
@@ -36,16 +40,16 @@ int Expression<T>::GetOperatorIndex(const std::string& expr) const {
 }
 
 template <typename T>
-T Expression<T>::ParseAndEvaluate(const std::string& expr) {
+void Expression<T>::Parse(const std::string& expr) {
   int op_index = GetOperatorIndex(expr);
   if (op_index != -1) {
     operator_node_cache_ = std::make_unique<OperatorNode<T>>(
         expr.substr(0, op_index),
         expr[op_index],
         expr.substr(op_index + 1));
-    return operator_node_cache_->Eval();
+    return;
   }
-  return GetSimplifiedVal(expr);
+  simplified_value_ = GetSimplifiedVal(expr);
 }
 
 template <typename T>
@@ -63,7 +67,7 @@ void Expression<T>::PrintAsTree(int indent) {
   if (operator_node_cache_ != nullptr) {
     operator_node_cache_->PrintAsTree(indent);
   } else {
-    std::cout << std::string(indent, ' ') << result_ << std::endl;
+    std::cout << std::string(indent, ' ') << simplified_value_ << std::endl;
   }
 }
 
@@ -72,7 +76,7 @@ std::string Expression<T>::ToStringWithParen() {
   if (operator_node_cache_ != nullptr) {
     return operator_node_cache_->ToStringWithParen();
   }
-  return "(" + std::to_string(result_) + ")";
+  return "(" + std::to_string(simplified_value_) + ")";
 }
 
 template class Expression<int>;
