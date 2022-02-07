@@ -55,9 +55,16 @@ TEST_F(ExpressionsTests, BasicBodmasCheck) {  // NOLINT
 
 TEST_F(ExpressionsTests, BasicReadabilityCheck) {  // NOLINT
   std::string input("1+2");
-  auto e = Expr(input);
+  auto e = ParseInput(input);
   LOG(INFO) << "Result is: " << e.Eval();
   EXPECT_EQ(e.Eval(), 3);
+}
+
+TEST_F(ExpressionsTests, BasicDoubleCheck) {  // NOLINT
+  std::string input("1.1+2*1.5");
+  auto e = ParseInputD(input);
+  LOG(INFO) << "Result is: " << e.Eval();
+  EXPECT_EQ(e.Eval(), 4.1);
 }
 
 }  // namespace code_experiments
