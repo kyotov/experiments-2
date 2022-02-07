@@ -24,12 +24,15 @@ include(GoogleTest)
 
 # Specify settings for clang-tidy
 string(REGEX REPLACE "[\\\\|/]" "[\\\\/]" HEADERS "${CMAKE_BINARY_DIR}/../.*")
-set(CMAKE_CXX_CLANG_TIDY
+set(CMAKE_CXX_CLANG_TIDY__DISABLED
         "clang-tidy"
         "--header-filter=${HEADERS}"
         "--export-fixes=${CMAKE_BINARY_DIR}/clang-tidy.fixes")
 
 add_subdirectory(expressions)
+add_subdirectory(ky_expressions)
+add_subdirectory(test_expressions)
+
 add_subdirectory(iterators)
 add_subdirectory(code_checks)
 add_subdirectory(type_size_optimizations)

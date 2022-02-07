@@ -1,0 +1,11 @@
+add_executable(test_expressions
+    test_expressions.cc
+)
+target_link_libraries(test_expressions
+    glog::glog
+    GTest::gtest
+    GTest::gtest_main
+    expressions
+    ky_expressions
+)
+gtest_discover_tests(test_expressions)
