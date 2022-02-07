@@ -9,6 +9,22 @@
 namespace code_experiments {
 
 template <typename T>
+OperatorNode<T>::OperatorNode(
+    const std::string &left,
+    char op,
+    const std::string &right)
+    : left_(left),
+      operator_(op),
+      right_(right) {}
+
+template <typename T>
+OperatorNode<T>::OperatorNode(std::istream &in) : operator_('?') {
+  in >> operator_;
+  left_ = std::move(Expression<T>(in));
+  right_ = std::move(Expression<T>(in));
+}
+
+template <typename T>
 T OperatorNode<T>::Eval() {
   T left = left_.Eval();
   T right = right_.Eval();

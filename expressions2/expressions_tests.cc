@@ -77,16 +77,39 @@ TEST_F(ExpressionsTests, BasicToStreamCheck) {  // NOLINT
   EXPECT_EQ("Op + Constant 1 Constant 2 ", out.str());
 }
 
+TEST_F(ExpressionsTests, BasicFromStreamCheck) {  // NOLINT
+  std::stringstream stream("Op + Constant 5 Constant 2");
+  auto e = ParseInput(stream);
+  LOG(INFO) << "Result is: " << e.Eval();
+  e.PrintAsTree(0);
+  EXPECT_EQ(7, e.Eval());
+}
+
+TEST_F(ExpressionsTests, BasicFromStreamDoubleCheck) {  // NOLINT
+  std::stringstream stream("Op + Constant 5.1 Constant 2.2");
+  auto e = ParseInputD(stream);
+  LOG(INFO) << "Result is: " << e.Eval();
+  e.PrintAsTree(0);
+  EXPECT_EQ(7.3, e.Eval());
+}
+
 TEST_F(ExpressionsTests, ToFromStreamCheck) {  // NOLINT
   std::string input("1+2*3-4");
+  const int result = 3;
   auto e = ParseInput(input);
-  std::stringstream out;
+  std::stringstream stream;
   LOG(INFO) << "Result is: " << e.Eval();
-  e.ToStream(out);
-  LOG(INFO) << out.str();
+  EXPECT_EQ(result, e.Eval());
+  e.ToStream(stream);
+  LOG(INFO) << stream.str();
   EXPECT_EQ(
       "Op - Op + Constant 1 Op * Constant 2 Constant 3 Constant 4 ",
-      out.str());
+      stream.str());
+  stream.seekg(0);
+  auto e2 = ParseInput(stream);
+  LOG(INFO) << "Result on read value: " << e2.Eval();
+  e2.PrintAsTree(0);
+  EXPECT_EQ(result, e2.Eval());
 }
 
 }  // namespace code_experiments

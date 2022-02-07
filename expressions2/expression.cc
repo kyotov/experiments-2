@@ -15,6 +15,38 @@ Expression<T>::Expression(const std::string& expr)
 }
 
 template <typename T>
+Expression<T>::Expression(std::istream& in)
+    : simplified_value_(-1),
+      operator_node_cache_(nullptr) {
+  std::string specifier;
+  in >> specifier;
+  if (specifier == kOperatorStr) {
+    operator_node_cache_ = std::make_unique<OperatorNode<T>>(in);
+  } else {
+    CHECK(specifier == kConstantStr) << "Unexpected: " << specifier;
+    std::string expr;
+    in >> expr;
+    simplified_value_ = GetSimplifiedVal(expr);
+  }
+}
+template <typename T>
+Expression<T>& Expression<T>::operator=(Expression<T>&& from) noexcept {
+  simplified_value_ = from.simplified_value_;
+  operator_node_cache_ = std::move(from.operator_node_cache_);
+  return *this;
+}
+
+template <typename T>
+Expression<T>::Expression(Expression<T>&& from) noexcept
+    : simplified_value_(from.simplified_value_),
+      operator_node_cache_(std::move(from.operator_node_cache_)) {}
+
+template <typename T>
+Expression<T>::Expression()
+    : simplified_value_(-1),
+      operator_node_cache_(nullptr) {}
+
+template <typename T>
 T Expression<T>::Eval() {
   if (operator_node_cache_ != nullptr) {
     return operator_node_cache_->Eval();
@@ -48,9 +80,9 @@ void Expression<T>::Parse(const std::string& expr) {
         expr.substr(0, op_index),
         expr[op_index],
         expr.substr(op_index + 1));
-    return;
+  } else {
+    simplified_value_ = GetSimplifiedVal(expr);
   }
-  simplified_value_ = GetSimplifiedVal(expr);
 }
 
 template <typename T>

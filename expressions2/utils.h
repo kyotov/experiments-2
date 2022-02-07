@@ -10,10 +10,11 @@ namespace code_experiments {
 using Expr = Expression<int>;
 using ExprD = Expression<double>;
 
-Expr ParseInput(const std::string& input) { return Expression<int>(input); }
-ExprD ParseInputD(const std::string& input) {
-  return Expression<double>(input);
-}
+Expr ParseInput(const std::string& input);
+Expr ParseInput(std::istream& input);
+
+ExprD ParseInputD(const std::string& input);
+ExprD ParseInputD(std::istream& input);
 
 }  // namespace code_experiments
 

@@ -16,6 +16,15 @@ template <typename T>
 class Expression {
 public:
   explicit Expression(const std::string& expr);
+  explicit Expression(std::istream& in);
+  Expression<T>& operator=(Expression<T>&& from) noexcept;
+  Expression(Expression<T>&& from) noexcept;
+  Expression();
+
+  ~Expression() = default;
+  Expression<T>& operator=(Expression<T>& from) = delete;
+  Expression(const Expression<T>& from) = delete;
+
   [[nodiscard]] T Eval();
   void PrintAsTree(int indent);
   std::string ToStringWithParen();

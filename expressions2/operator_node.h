@@ -11,10 +11,8 @@ class Expression;
 template <typename T>
 class OperatorNode {
 public:
-  OperatorNode(const std::string &left, char op, const std::string &right)
-      : left_(left),
-        operator_(op),
-        right_(right) {}
+  OperatorNode(const std::string &left, char op, const std::string &right);
+  OperatorNode(std::istream &in);
   [[nodiscard]] T Eval();
   void PrintAsTree(int indent);
   [[nodiscard]] std::string ToStringWithParen();
