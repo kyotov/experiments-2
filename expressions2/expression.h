@@ -19,6 +19,7 @@ public:
   [[nodiscard]] T Eval();
   void PrintAsTree(int indent);
   std::string ToStringWithParen();
+  void ToStream(std::ostream& out);
 
 private:
   [[nodiscard]] int GetOperatorIndex(const std::string& expr) const;

@@ -4,6 +4,8 @@
 
 #include <cmath>
 
+#include "consts.h"
+
 namespace code_experiments {
 
 template <typename T>
@@ -28,7 +30,7 @@ T OperatorNode<T>::Eval() {
 
 template <typename T>
 void OperatorNode<T>::PrintAsTree(int indent) {
-  std::cout << std::string(indent, ' ') << operator_ << std::endl;
+  std::cout << std::string(indent, kSeparator) << operator_ << std::endl;
   left_.PrintAsTree(indent + 1);
   right_.PrintAsTree(indent + 1);
 }
@@ -37,6 +39,13 @@ template <typename T>
 std::string OperatorNode<T>::ToStringWithParen() {
   return "(" + left_.ToStringWithParen() + operator_ +
          right_.ToStringWithParen() + ")";
+}
+
+template <typename T>
+void OperatorNode<T>::ToStream(std::ostream &out) {
+  out << kOperatorStr << " " << operator_ << kSeparator;
+  left_.ToStream(out);
+  right_.ToStream(out);
 }
 
 template class OperatorNode<int>;

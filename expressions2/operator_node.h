@@ -18,8 +18,11 @@ public:
   [[nodiscard]] T Eval();
   void PrintAsTree(int indent);
   [[nodiscard]] std::string ToStringWithParen();
+  void ToStream(std::ostream &out);
 
 private:
+  static const char kSeparator = ' ';
+
   Expression<T> left_;
   char operator_;
   Expression<T> right_;

@@ -3,6 +3,7 @@
 #include <glog/logging.h>
 
 #include "../cast_utils/cast_utils.h"
+#include "consts.h"
 
 namespace code_experiments {
 
@@ -67,7 +68,8 @@ void Expression<T>::PrintAsTree(int indent) {
   if (operator_node_cache_ != nullptr) {
     operator_node_cache_->PrintAsTree(indent);
   } else {
-    std::cout << std::string(indent, ' ') << simplified_value_ << std::endl;
+    std::cout << std::string(indent, kSeparator) << simplified_value_
+              << std::endl;
   }
 }
 
@@ -77,6 +79,15 @@ std::string Expression<T>::ToStringWithParen() {
     return operator_node_cache_->ToStringWithParen();
   }
   return "(" + std::to_string(simplified_value_) + ")";
+}
+
+template <typename T>
+void Expression<T>::ToStream(std::ostream& out) {
+  if (operator_node_cache_ != nullptr) {
+    operator_node_cache_->ToStream(out);
+  } else {
+    out << kConstantStr << " " << simplified_value_ << kSeparator;
+  }
 }
 
 template class Expression<int>;

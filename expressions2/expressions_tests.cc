@@ -67,4 +67,26 @@ TEST_F(ExpressionsTests, BasicDoubleCheck) {  // NOLINT
   EXPECT_EQ(e.Eval(), 4.1);
 }
 
+TEST_F(ExpressionsTests, BasicToStreamCheck) {  // NOLINT
+  std::string input("1+2");
+  auto e = ParseInput(input);
+  std::stringstream out;
+  LOG(INFO) << "Result is: " << e.Eval();
+  e.ToStream(out);
+  LOG(INFO) << out.str();
+  EXPECT_EQ("Op + Constant 1 Constant 2 ", out.str());
+}
+
+TEST_F(ExpressionsTests, ToFromStreamCheck) {  // NOLINT
+  std::string input("1+2*3-4");
+  auto e = ParseInput(input);
+  std::stringstream out;
+  LOG(INFO) << "Result is: " << e.Eval();
+  e.ToStream(out);
+  LOG(INFO) << out.str();
+  EXPECT_EQ(
+      "Op - Op + Constant 1 Op * Constant 2 Constant 3 Constant 4 ",
+      out.str());
+}
+
 }  // namespace code_experiments
