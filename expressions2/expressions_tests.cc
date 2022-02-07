@@ -5,6 +5,7 @@
 
 #include "expression.h"
 #include "operator_node.h"
+#include "utils.h"
 
 namespace code_experiments {
 
@@ -45,19 +46,17 @@ TEST_F(ExpressionsTests, BasicBodmasCheck) {  // NOLINT
       expression_to_value.begin(),
       expression_to_value.end(),
       [](const std::pair<std::string, int>& element) {
-        int value = Expression<int>(element.first).Eval();
+        auto e = ParseInput(element.first);
+        int value = e.Eval();
         LOG(INFO) << element.first << " = " << value;
         EXPECT_EQ(value, element.second);
       });
 }
 
 TEST_F(ExpressionsTests, BasicReadabilityCheck) {  // NOLINT
-  using Expr = Expression<int>;
-
   std::string input("1+2");
   auto e = Expr(input);
   LOG(INFO) << "Result is: " << e.Eval();
-
   EXPECT_EQ(e.Eval(), 3);
 }
 
