@@ -12,7 +12,9 @@ ConstantExpression::ConstantExpression(int value) : value_(value) {}
 int ConstantExpression::Compute() { return value_; }
 
 std::string ConstantExpression::AsString() {
-  return (std::stringstream() << "(" << value_ << ")").str();
+  std::stringstream stream;
+  stream << "(" << value_ << ")";
+  return stream.str();
 }
 
 std::unique_ptr<Expression> ConstantExpression::Load(std::istream &s) {
@@ -51,9 +53,9 @@ int BinaryOperatorExpression::Compute() {
 }
 
 std::string BinaryOperatorExpression::AsString() {
-  return (std::stringstream()
-          << "(" << l_->AsString() << op_ << r_->AsString() << ")")
-      .str();
+  std::stringstream stream;
+  stream << "(" << l_->AsString() << op_ << r_->AsString() << ")";
+  return stream.str();
 }
 
 std::unique_ptr<Expression> BinaryOperatorExpression::Load(std::istream &s) {
@@ -66,9 +68,9 @@ std::unique_ptr<Expression> BinaryOperatorExpression::Load(std::istream &s) {
 }
 
 void BinaryOperatorExpression::Save(std::ostream &s) {
-    s << "BOp " << op_ << " ";
-    l_->Save(s);
-    r_->Save(s);
+  s << "BOp " << op_ << " ";
+  l_->Save(s);
+  r_->Save(s);
 }
 
 //--- Expression ---

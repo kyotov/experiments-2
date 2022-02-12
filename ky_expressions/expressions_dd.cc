@@ -48,7 +48,9 @@ std::string Expressions::AsString(Expressions::Expr &e) {
   class V : public ExpressionVisitor {
   public:
     void Visit(ConstantExpression &e) {
-      result_ = (std::stringstream() << "(" << e.GetValue() << ")").str();
+      std::stringstream stream;
+      stream << "(" << e.GetValue() << ")";
+      result_ = stream.str();
     }
 
     void Visit(BinaryOperatorExpression &e) {
@@ -56,8 +58,9 @@ std::string Expressions::AsString(Expressions::Expr &e) {
       auto l = std::move(result_);
       e.GetRHS().Accept(*this);
       auto r = std::move(result_);
-      result_ =
-          (std::stringstream() << "(" << l << e.GetOp() << r << ")").str();
+      std::stringstream stream;
+      stream << "(" << l << e.GetOp() << r << ")";
+      result_ = stream.str();
     }
 
     std::string result_;
