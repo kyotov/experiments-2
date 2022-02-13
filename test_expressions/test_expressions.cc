@@ -146,6 +146,6 @@ TEST(Expressions, KyExpressions) { RunTests<KyExpressionsDriver>(); }
 TEST(Expressions, KyExpressionsDD) { RunTests<KyExpressionsDriverDD>(); }
 
 // TODO(ashish): uncomment the below when your code works
-// TEST(Expressions2, KyExpressions) { Test2<AtExpressionsDriver>(); }
+TEST(Expressions2, AtExpressions) { Test3<AtExpressionsDriver>(); }
 // TEST(Expressions2, KyExpressions) { Test3<KyExpressionsDriver>(); }
 // TEST(Expressions2, KyExpressionsDD) { Test3<KyExpressionsDriverDD>(); }

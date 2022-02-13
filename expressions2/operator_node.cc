@@ -18,8 +18,13 @@ OperatorNode<T>::OperatorNode(
       right_(right) {}
 
 template <typename T>
-OperatorNode<T>::OperatorNode(std::istream &in) : operator_('?') {
-  in >> operator_;
+OperatorNode<T>::OperatorNode(std::istream &in, const std::string &specifier)
+    : operator_('?') {
+  if (specifier == kTOperatorStr) {
+    ternary_ = std::move(Expression<T>(in));
+  } else {
+    in >> operator_;
+  }
   left_ = std::move(Expression<T>(in));
   right_ = std::move(Expression<T>(in));
 }
@@ -54,6 +59,8 @@ T OperatorNode<T>::Eval() {
       return left / right;
     case '^':
       return std::pow(left, right);
+    case '?':
+      return ternary_.Eval() != 0 ? left : right;
     default:
       LOG_ASSERT(false) << "Unexpected operator: " << operator_;
   }
@@ -68,8 +75,14 @@ void OperatorNode<T>::PrintAsTree(int indent) {
 
 template <typename T>
 std::string OperatorNode<T>::ToStringWithParen() {
-  return "(" + left_.ToStringWithParen() + operator_ +
-         right_.ToStringWithParen() + ")";
+  switch (operator_) {
+    case '?':
+      return "(" + ternary_.ToStringWithParen() + operator_ +
+             left_.ToStringWithParen() + ":" + right_.ToStringWithParen() + ")";
+    default:
+      return "(" + left_.ToStringWithParen() + operator_ +
+             right_.ToStringWithParen() + ")";
+  }
 }
 
 template <typename T>

@@ -12,7 +12,7 @@ template <typename T>
 class OperatorNode {
 public:
   OperatorNode(const std::string &left, char op, const std::string &right);
-  OperatorNode(std::istream &in);
+  OperatorNode(std::istream &in, const std::string &specifier);
   OperatorNode(Expression<T> &&left, char op, Expression<T> &&right);
   OperatorNode(const OperatorNode<T> &from);
   OperatorNode(OperatorNode<T> &&from) noexcept = delete;
@@ -29,6 +29,8 @@ private:
   Expression<T> left_;
   char operator_;
   Expression<T> right_;
+  // NOTE: Further extension will likely be through n-ary form.
+  Expression<T> ternary_;
 };
 
 }  // namespace code_experiments
