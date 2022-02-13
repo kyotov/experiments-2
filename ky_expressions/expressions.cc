@@ -1,8 +1,8 @@
 #include "expressions.h"
 
+#include <iostream>
 #include <map>
 #include <sstream>
-#include <iostream>
 
 namespace ky_expr {
 
@@ -97,11 +97,13 @@ std::string TernaryOperatorExpression::AsString() {
 }
 
 std::unique_ptr<Expression> TernaryOperatorExpression::Load(std::istream &s) {
+  auto c = Expression::Load(s);
+  auto t = Expression::Load(s);
+  auto f = Expression::Load(s);
   return std::make_unique<TernaryOperatorExpression>(
-    std::move(Expression::Load(s)),
-    std::move(Expression::Load(s)),
-    std::move(Expression::Load(s))
-  );
+      std::move(c),
+      std::move(t),
+      std::move(f));
 }
 
 void TernaryOperatorExpression::Save(std::ostream &s) {
