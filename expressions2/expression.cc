@@ -42,6 +42,14 @@ Expression<T>::Expression(Expression<T>&& from) noexcept
       operator_node_cache_(std::move(from.operator_node_cache_)) {}
 
 template <typename T>
+Expression<T>::Expression(Expression<T>&& left, char op, Expression<T>&& right)
+    : simplified_value_(-1),
+      operator_node_cache_(std::make_unique<OperatorNode<T>>(
+          std::move(left),
+          op,
+          std::move(right))) {}
+
+template <typename T>
 Expression<T>::Expression()
     : simplified_value_(-1),
       operator_node_cache_(nullptr) {}

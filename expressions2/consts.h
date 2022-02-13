@@ -4,8 +4,8 @@
 namespace code_experiments {
 
 const char kSeparator = ' ';
-const std::string kOperatorStr = "Op";
-const std::string kConstantStr = "Constant";
+const std::string kOperatorStr = "BOp";
+const std::string kConstantStr = "C";
 
 }  // namespace code_experiments
 

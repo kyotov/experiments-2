@@ -13,14 +13,16 @@ class OperatorNode {
 public:
   OperatorNode(const std::string &left, char op, const std::string &right);
   OperatorNode(std::istream &in);
+  OperatorNode(Expression<T> &&left, char op, Expression<T> &&right)
+      : left_(std::move(left)),
+        operator_(op),
+        right_(std::move(right)) {}
   [[nodiscard]] T Eval();
   void PrintAsTree(int indent);
   [[nodiscard]] std::string ToStringWithParen();
   void ToStream(std::ostream &out);
 
 private:
-  static const char kSeparator = ' ';
-
   Expression<T> left_;
   char operator_;
   Expression<T> right_;

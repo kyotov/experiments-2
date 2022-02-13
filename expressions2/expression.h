@@ -20,6 +20,10 @@ public:
   Expression<T>& operator=(Expression<T>&& from) noexcept;
   Expression(Expression<T>&& from) noexcept;
   Expression();
+  Expression(Expression<T>&& left, char op, Expression<T>&& right);
+  Expression(T constant)
+      : simplified_value_(constant),
+        operator_node_cache_(nullptr) {}
 
   ~Expression() = default;
   Expression<T>& operator=(Expression<T>& from) = delete;

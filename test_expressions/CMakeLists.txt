@@ -5,7 +5,7 @@ target_link_libraries(test_expressions
     glog::glog
     GTest::gtest
     GTest::gtest_main
-    expressions
     ky_expressions
+    expressions2
 )
 gtest_discover_tests(test_expressions)

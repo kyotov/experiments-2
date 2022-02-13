@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
 
+#include "../expressions2/utils.h"
 #include "../ky_expressions/expressions.h"
 #include "../ky_expressions/expressions_dd.h"
 
@@ -13,25 +14,23 @@
 //               If you want to change something reasonable about the
 //               driver interface, let me know and I will adjust mine.
 //
-#ifdef ASHISH_POPULATED_DRIVER
 
 // Ashish's Driver (no dynamic dispatch)
 class AtExpressionsDriver {
-  using Expr = ...
+public:
+  using Expr = code_experiments::Expr;
 
-      public : int
-               compute(Expr e) { /* ... */
+  static int Compute(Expr &e) { return e.Eval(); }
+  static std::string AsString(Expr &e) { return e.ToStringWithParen(); }
+  static void Save(Expr &e, std::ostream &s) { e.ToStream(s); }
+  static Expr Load(std::istream &s) { return code_experiments::ParseInput(s); }
+  static Expr ConstantExpression(int value) {
+    return code_experiments::Expr(value);
   }
-  void Save(Expr e, std::ostream &s) { /* ... */
+  static Expr BinaryOperatorExpression(char op, Expr l, Expr r) {
+    return code_experiments::Expr(std::move(l), op, std::move(r));
   }
-  Expr Load(std::istream &s) { /* ... */
-  }
-  Expr ConstantExpression(int value) { /* ... */
-  }
-  Expr BinaryOperatorExpression(char op, Expr l, Expr r) { /* ... */
-  }
-}
-#endif
+};
 
 // Kamen's [Single] Dynamic Dispatch Driver
 class KyExpressionsDriver {
@@ -120,9 +119,7 @@ void test1() {
   ASSERT_EQ(D::AsString(e2), "((2)+(2))");
 }
 
-#ifdef ASHISH_POPULATED_DRIVER
 TEST(Expressions, AtExpressions) { test1<AtExpressionsDriver>(); }
-#endif
 
 TEST(Expressions, KyExpressions) { test1<KyExpressionsDriver>(); }
 
