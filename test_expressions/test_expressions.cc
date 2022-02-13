@@ -49,8 +49,9 @@ public:
 
   static Expr TernaryOperatorExpression(Expr c, Expr t, Expr f) {
     return std::make_unique<ky_expr::TernaryOperatorExpression>(
-      std::move(c), std::move(t), std::move(f)
-    );
+        std::move(c),
+        std::move(t),
+        std::move(f));
   }
 };
 
@@ -67,7 +68,7 @@ public:
 };
 
 // Kamen's Double Dynamic Dispatch Driver
-class KyExpressionsDriverDD : public KyExpressionsCommon  {
+class KyExpressionsDriverDD : public KyExpressionsCommon {
 public:
   static int Compute(Expr &e) { return ky_expr::Expressions::Compute(e); }
 
@@ -137,18 +138,14 @@ void Test3() {
 template <typename D>
 void RunTests() {
   Test1<D>();
-  // Test2<D>();
+  Test2<D>();
 }
 
 TEST(Expressions, AtExpressions) { RunTests<AtExpressionsDriver>(); }
 TEST(Expressions, KyExpressions) { RunTests<KyExpressionsDriver>(); }
 TEST(Expressions, KyExpressionsDD) { RunTests<KyExpressionsDriverDD>(); }
 
-TEST(ExpressionsTest2, AtExpressions) { Test2<AtExpressionsDriver>(); }
-TEST(ExpressionsTest2, KyExpressions) { Test2<KyExpressionsDriver>(); }
-TEST(ExpressionsTest2, KyExpressionsDD) { Test2<KyExpressionsDriverDD>(); }
-
 // TODO(ashish): uncomment the below when your code works
 // TEST(Expressions2, KyExpressions) { Test2<AtExpressionsDriver>(); }
-TEST(Expressions2, KyExpressions) { Test3<KyExpressionsDriver>(); }
-TEST(Expressions2, KyExpressionsDD) { Test3<KyExpressionsDriverDD>(); }
+// TEST(Expressions2, KyExpressions) { Test3<KyExpressionsDriver>(); }
+// TEST(Expressions2, KyExpressionsDD) { Test3<KyExpressionsDriverDD>(); }
