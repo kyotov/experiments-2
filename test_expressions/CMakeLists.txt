@@ -9,3 +9,4 @@ target_link_libraries(test_expressions
     expressions2
 )
 gtest_discover_tests(test_expressions)
+set_target_properties(test_expressions PROPERTIES CXX_CLANG_TIDY "")
