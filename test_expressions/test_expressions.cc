@@ -135,6 +135,13 @@ void Test3() {
 }
 
 template <typename D>
+void Test4() {
+  typename D::Expr e = LoadFromString<D>("Fx min 5 C 2 BOp - C 4 C 7 C 1 C 3 C 5 ");
+  EXPECT_EQ(D::AsString(e), "min((2),((4)-(7)),(1),(3),(5))");
+  EXPECT_EQ(D::Compute(e), -3);
+}
+
+template <typename D>
 void RunTests() {
   Test1<D>();
   // Test2<D>();
@@ -144,11 +151,14 @@ TEST(Expressions, AtExpressions) { RunTests<AtExpressionsDriver>(); }
 TEST(Expressions, KyExpressions) { RunTests<KyExpressionsDriver>(); }
 TEST(Expressions, KyExpressionsDD) { RunTests<KyExpressionsDriverDD>(); }
 
-TEST(ExpressionsTest2, AtExpressions) { Test2<AtExpressionsDriver>(); }
-TEST(ExpressionsTest2, KyExpressions) { Test2<KyExpressionsDriver>(); }
-TEST(ExpressionsTest2, KyExpressionsDD) { Test2<KyExpressionsDriverDD>(); }
+TEST(Expressions2, AtExpressions) { Test2<AtExpressionsDriver>(); }
+TEST(Expressions2, KyExpressions) { Test2<KyExpressionsDriver>(); }
+TEST(Expressions2, KyExpressionsDD) { Test2<KyExpressionsDriverDD>(); }
 
 // TODO(ashish): uncomment the below when your code works
 // TEST(Expressions2, KyExpressions) { Test2<AtExpressionsDriver>(); }
-TEST(Expressions2, KyExpressions) { Test3<KyExpressionsDriver>(); }
-TEST(Expressions2, KyExpressionsDD) { Test3<KyExpressionsDriverDD>(); }
+TEST(Expressions3, KyExpressions) { Test3<KyExpressionsDriver>(); }
+TEST(Expressions3, KyExpressionsDD) { Test3<KyExpressionsDriverDD>(); }
+
+TEST(Expressions4, KyExpressions) { Test4<KyExpressionsDriver>(); }
+TEST(Expressions4, KyExpressionsDD) { Test4<KyExpressionsDriverDD>(); }
