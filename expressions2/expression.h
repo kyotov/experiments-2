@@ -21,6 +21,11 @@ public:
   Expression(Expression<T>&& from) noexcept;
   Expression();
   Expression(Expression<T>&& left, char op, Expression<T>&& right);
+  Expression(
+      char op,
+      Expression<T>&& ternary,
+      Expression<T>&& left,
+      Expression<T>&& right);
   Expression(T constant);
   Expression(const Expression<T>& from);
 

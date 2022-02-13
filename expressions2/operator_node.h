@@ -14,6 +14,11 @@ public:
   OperatorNode(const std::string &left, char op, const std::string &right);
   OperatorNode(std::istream &in, const std::string &specifier);
   OperatorNode(Expression<T> &&left, char op, Expression<T> &&right);
+  OperatorNode(
+      char op,
+      Expression<T> &&ternary,
+      Expression<T> &&left,
+      Expression<T> &&right);
   OperatorNode(const OperatorNode<T> &from);
   OperatorNode(OperatorNode<T> &&from) noexcept = delete;
   ~OperatorNode() = default;

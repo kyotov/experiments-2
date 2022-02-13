@@ -39,6 +39,17 @@ OperatorNode<T>::OperatorNode(
       right_(std::move(right)) {}
 
 template <typename T>
+OperatorNode<T>::OperatorNode(
+    char op,
+    Expression<T> &&ternary,
+    Expression<T> &&left,
+    Expression<T> &&right)
+    : operator_(op),
+      ternary_(std::move(ternary)),
+      left_(std::move(left)),
+      right_(std::move(right)) {}
+
+template <typename T>
 OperatorNode<T>::OperatorNode(const OperatorNode<T> &from)
     : left_(from.left_),
       operator_(from.operator_),

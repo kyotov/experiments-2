@@ -66,6 +66,19 @@ Expression<T>::Expression(Expression<T>&& left, char op, Expression<T>&& right)
           std::move(right))) {}
 
 template <typename T>
+Expression<T>::Expression(
+    char op,
+    Expression<T>&& ternary,
+    Expression<T>&& left,
+    Expression<T>&& right)
+    : simplified_value_(-1),
+      operator_node_cache_(std::make_unique<OperatorNode<T>>(
+          op,
+          std::move(ternary),
+          std::move(left),
+          std::move(right))) {}
+
+template <typename T>
 Expression<T>::Expression()
     : simplified_value_(-1),
       operator_node_cache_(nullptr) {}

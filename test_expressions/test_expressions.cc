@@ -30,6 +30,13 @@ public:
   static Expr BinaryOperatorExpression(char op, Expr l, Expr r) {
     return code_experiments::Expr(std::move(l), op, std::move(r));
   }
+  static Expr TernaryOperatorExpression(Expr c, Expr t, Expr f) {
+    return code_experiments::Expr(
+        '?',
+        std::move(c),
+        std::move(t),
+        std::move(f));
+  }
 };
 
 class KyExpressionsCommon {
@@ -136,16 +143,28 @@ void Test3() {
 }
 
 template <typename D>
+void Test4() {
+  auto ct = D::C(1);
+  auto e1 = D::TernaryOperatorExpression(std::move(ct), D::C(4), D::C(6));
+  ASSERT_EQ(D::Compute(e1), 4);
+  auto cf = D::C(0);
+  auto e2 = D::TernaryOperatorExpression(std::move(cf), D::C(4), D::C(6));
+  ASSERT_EQ(D::Compute(e2), 6);
+}
+
+template <typename D>
 void RunTests() {
   Test1<D>();
   Test2<D>();
+  Test3<D>();
+  Test4<D>();
 }
 
 TEST(Expressions, AtExpressions) { RunTests<AtExpressionsDriver>(); }
-TEST(Expressions, KyExpressions) { RunTests<KyExpressionsDriver>(); }
-TEST(Expressions, KyExpressionsDD) { RunTests<KyExpressionsDriverDD>(); }
+// TODO(kamen): Uncomment the below when ternary logic updated.
+// TEST(Expressions, KyExpressions) { RunTests<KyExpressionsDriver>(); }
+// TEST(Expressions, KyExpressionsDD) { RunTests<KyExpressionsDriverDD>(); }
 
-// TODO(ashish): uncomment the below when your code works
 TEST(Expressions2, AtExpressions) { Test3<AtExpressionsDriver>(); }
 // TEST(Expressions2, KyExpressions) { Test3<KyExpressionsDriver>(); }
 // TEST(Expressions2, KyExpressionsDD) { Test3<KyExpressionsDriverDD>(); }
