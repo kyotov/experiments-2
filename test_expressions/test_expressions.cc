@@ -106,7 +106,7 @@ typename D::Expr LoadFromString(const std::string &i) {
 }
 
 template <typename D>
-void test1() {
+void Test1() {
   auto e = D::BOp('+', D::C(2), D::C(2));
 
   ASSERT_EQ(D::Compute(e), 4);
@@ -119,8 +119,11 @@ void test1() {
   ASSERT_EQ(D::AsString(e2), "((2)+(2))");
 }
 
-TEST(Expressions, AtExpressions) { test1<AtExpressionsDriver>(); }
+template <typename D>
+void RunTests() {
+  Test1<D>();
+}
 
-TEST(Expressions, KyExpressions) { test1<KyExpressionsDriver>(); }
-
-TEST(Expressions, KyExpressionsDD) { test1<KyExpressionsDriverDD>(); }
+TEST(Expressions, AtExpressions) { RunTests<AtExpressionsDriver>(); }
+TEST(Expressions, KyExpressions) { RunTests<KyExpressionsDriver>(); }
+TEST(Expressions, KyExpressionsDD) { RunTests<KyExpressionsDriverDD>(); }
