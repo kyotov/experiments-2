@@ -76,7 +76,9 @@ Expression<T>::Expression(
           op,
           std::move(ternary),
           std::move(left),
-          std::move(right))) {}
+          std::move(right))) {
+  CHECK(op == '?') << "'?' is the only allowed ternary operator at this time";
+}
 
 template <typename T>
 Expression<T>::Expression()
