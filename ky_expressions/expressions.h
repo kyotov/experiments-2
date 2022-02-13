@@ -7,10 +7,12 @@ namespace ky_expr {
 
 class ConstantExpression;
 class BinaryOperatorExpression;
+class TernaryOperatorExpression;
 class ExpressionVisitor {
 public:
   virtual void Visit(ConstantExpression &) = 0;
   virtual void Visit(BinaryOperatorExpression &) = 0;
+  virtual void Visit(TernaryOperatorExpression &) = 0;
 };
 
 class Expression {
@@ -67,6 +69,31 @@ private:
   char op_;
   std::unique_ptr<Expression> l_;
   std::unique_ptr<Expression> r_;
+};
+
+class TernaryOperatorExpression final : public Expression {
+public:
+  TernaryOperatorExpression(
+      std::unique_ptr<Expression> condition,
+      std::unique_ptr<Expression> onTrue,
+      std::unique_ptr<Expression> onFalse);
+
+  int Compute() override;
+  std::string AsString() override;
+
+  void Accept(ExpressionVisitor &visitor) override { visitor.Visit(*this); }
+
+  static std::unique_ptr<Expression> Load(std::istream &s);
+  void Save(std::ostream &s) override;
+
+  Expression &GetCondition() { return *condition_; }
+  Expression &GetOnTrue() { return *onTrue_; }
+  Expression &GetOnFalse() { return *onFalse_; }
+
+private:
+  std::unique_ptr<Expression> condition_;
+  std::unique_ptr<Expression> onTrue_;
+  std::unique_ptr<Expression> onFalse_;
 };
 
 }  // namespace ky_expr
