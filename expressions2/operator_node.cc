@@ -98,7 +98,15 @@ std::string OperatorNode<T>::ToStringWithParen() {
 
 template <typename T>
 void OperatorNode<T>::ToStream(std::ostream &out) {
-  out << kBOperatorStr << " " << operator_ << kSeparator;
+  switch (operator_) {
+    case '?':
+      out << kTOperatorStr << kSeparator;
+      ternary_.ToStream(out);
+      break;
+    default:
+      out << kBOperatorStr << kSeparator << operator_ << kSeparator;
+      break;
+  }
   left_.ToStream(out);
   right_.ToStream(out);
 }

@@ -150,6 +150,11 @@ void Test4() {
   auto cf = D::C(0);
   auto e2 = D::TernaryOperatorExpression(std::move(cf), D::C(4), D::C(6));
   ASSERT_EQ(D::Compute(e2), 6);
+  std::stringstream stream;
+  D::Save(e2, stream);
+  stream.seekg(0);
+  auto e3 = D::Load(stream);
+  ASSERT_EQ(D::Compute(e3), 6);
 }
 
 template <typename D>
