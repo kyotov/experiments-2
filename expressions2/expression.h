@@ -21,13 +21,11 @@ public:
   Expression(Expression<T>&& from) noexcept;
   Expression();
   Expression(Expression<T>&& left, char op, Expression<T>&& right);
-  Expression(T constant)
-      : simplified_value_(constant),
-        operator_node_cache_(nullptr) {}
+  Expression(T constant);
+  Expression(const Expression<T>& from);
 
   ~Expression() = default;
   Expression<T>& operator=(Expression<T>& from) = delete;
-  Expression(const Expression<T>& from) = delete;
 
   [[nodiscard]] T Eval();
   void PrintAsTree(int indent);

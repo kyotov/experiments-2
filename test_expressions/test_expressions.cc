@@ -120,10 +120,21 @@ void Test1() {
 }
 
 template <typename D>
+void Test2() {
+  auto c1 = D::C(2);
+  auto e1 = D::BOp('+', c1, c1);
+  ASSERT_EQ(D::Compute(e1), 4);
+  auto e2 = D::BOp('+', e1, c1);
+  ASSERT_EQ(D::Compute(e2), 6);
+}
+
+template <typename D>
 void RunTests() {
   Test1<D>();
+  // Test2<D>();
 }
 
 TEST(Expressions, AtExpressions) { RunTests<AtExpressionsDriver>(); }
+TEST(ExpressionsTest2, AtExpressions) { Test2<AtExpressionsDriver>(); }
 TEST(Expressions, KyExpressions) { RunTests<KyExpressionsDriver>(); }
 TEST(Expressions, KyExpressionsDD) { RunTests<KyExpressionsDriverDD>(); }

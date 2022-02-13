@@ -13,10 +13,13 @@ class OperatorNode {
 public:
   OperatorNode(const std::string &left, char op, const std::string &right);
   OperatorNode(std::istream &in);
-  OperatorNode(Expression<T> &&left, char op, Expression<T> &&right)
-      : left_(std::move(left)),
-        operator_(op),
-        right_(std::move(right)) {}
+  OperatorNode(Expression<T> &&left, char op, Expression<T> &&right);
+  OperatorNode(const OperatorNode<T> &from);
+  OperatorNode(OperatorNode<T> &&from) noexcept = delete;
+  ~OperatorNode() = default;
+  OperatorNode<T> &operator=(OperatorNode<T> &from) = delete;
+  OperatorNode<T> &operator=(OperatorNode<T> &&from) noexcept = delete;
+
   [[nodiscard]] T Eval();
   void PrintAsTree(int indent);
   [[nodiscard]] std::string ToStringWithParen();

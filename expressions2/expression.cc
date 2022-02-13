@@ -29,6 +29,7 @@ Expression<T>::Expression(std::istream& in)
     simplified_value_ = GetSimplifiedVal(expr);
   }
 }
+
 template <typename T>
 Expression<T>& Expression<T>::operator=(Expression<T>&& from) noexcept {
   simplified_value_ = from.simplified_value_;
@@ -40,6 +41,21 @@ template <typename T>
 Expression<T>::Expression(Expression<T>&& from) noexcept
     : simplified_value_(from.simplified_value_),
       operator_node_cache_(std::move(from.operator_node_cache_)) {}
+
+template <typename T>
+Expression<T>::Expression(const Expression<T>& from)
+    : simplified_value_(from.simplified_value_),
+      operator_node_cache_(nullptr) {
+  if (from.operator_node_cache_ != nullptr) {
+    operator_node_cache_ =
+        std::make_unique<OperatorNode<T>>(*from.operator_node_cache_);
+  }
+}
+
+template <typename T>
+Expression<T>::Expression(T constant)
+    : simplified_value_(constant),
+      operator_node_cache_(nullptr) {}
 
 template <typename T>
 Expression<T>::Expression(Expression<T>&& left, char op, Expression<T>&& right)

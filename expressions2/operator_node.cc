@@ -25,6 +25,21 @@ OperatorNode<T>::OperatorNode(std::istream &in) : operator_('?') {
 }
 
 template <typename T>
+OperatorNode<T>::OperatorNode(
+    Expression<T> &&left,
+    char op,
+    Expression<T> &&right)
+    : left_(std::move(left)),
+      operator_(op),
+      right_(std::move(right)) {}
+
+template <typename T>
+OperatorNode<T>::OperatorNode(const OperatorNode<T> &from)
+    : left_(from.left_),
+      operator_(from.operator_),
+      right_(from.right_) {}
+
+template <typename T>
 T OperatorNode<T>::Eval() {
   T left = left_.Eval();
   T right = right_.Eval();
