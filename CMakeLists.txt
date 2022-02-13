@@ -24,7 +24,7 @@ include(GoogleTest)
 
 # Specify settings for clang-tidy
 string(REGEX REPLACE "[\\\\|/]" "[\\\\/]" HEADERS "${CMAKE_BINARY_DIR}/../.*")
-set(CMAKE_CXX_CLANG_TIDY
+set(CMAKE_CXX_CLANG_TIDY__
         "clang-tidy"
         "--header-filter=${HEADERS}"
         "--export-fixes=${CMAKE_BINARY_DIR}/clang-tidy.fixes")
