@@ -32,18 +32,9 @@ public:
   }
 };
 
-// Kamen's [Single] Dynamic Dispatch Driver
-class KyExpressionsDriver {
+class KyExpressionsCommon {
 public:
   using Expr = std::unique_ptr<ky_expr::Expression>;
-
-  static int Compute(Expr &e) { return e->Compute(); }
-
-  static std::string AsString(Expr &e) { return e->AsString(); }
-
-  static void Save(Expr &e, std::ostream &s) { e->Save(s); }
-
-  static Expr Load(std::istream &s) { return ky_expr::Expression::Load(s); }
 
   static Expr ConstantExpression(int value) {
     return std::make_unique<ky_expr::ConstantExpression>(value);
@@ -55,13 +46,29 @@ public:
         std::move(l),
         std::move(r));
   }
+
+  static Expr TernaryOperatorExpression(Expr c, Expr t, Expr f) {
+    return std::make_unique<ky_expr::TernaryOperatorExpression>(
+      std::move(c), std::move(t), std::move(f)
+    );
+  }
+};
+
+// Kamen's [Single] Dynamic Dispatch Driver
+class KyExpressionsDriver : public KyExpressionsCommon {
+public:
+  static int Compute(Expr &e) { return e->Compute(); }
+
+  static std::string AsString(Expr &e) { return e->AsString(); }
+
+  static void Save(Expr &e, std::ostream &s) { e->Save(s); }
+
+  static Expr Load(std::istream &s) { return ky_expr::Expression::Load(s); }
 };
 
 // Kamen's Double Dynamic Dispatch Driver
-class KyExpressionsDriverDD {
+class KyExpressionsDriverDD : public KyExpressionsCommon  {
 public:
-  using Expr = std::unique_ptr<ky_expr::Expression>;
-
   static int Compute(Expr &e) { return ky_expr::Expressions::Compute(e); }
 
   static std::string AsString(Expr &e) {
@@ -73,17 +80,6 @@ public:
   }
 
   static Expr Load(std::istream &s) { return ky_expr::Expression::Load(s); }
-
-  static Expr ConstantExpression(int value) {
-    return std::make_unique<ky_expr::ConstantExpression>(value);
-  }
-
-  static Expr BinaryOperatorExpression(char op, Expr l, Expr r) {
-    return std::make_unique<ky_expr::BinaryOperatorExpression>(
-        op,
-        std::move(l),
-        std::move(r));
-  }
 };
 
 // NOTE: these shortcuts work for me... we might need to massage them for you.
@@ -128,6 +124,17 @@ void Test2() {
 }
 
 template <typename D>
+void Test3() {
+  typename D::Expr e1 = LoadFromString<D>("TOp BOp + C 1 C 1 C 101 C 202 ");
+  EXPECT_EQ(D::AsString(e1), "(((1)+(1))?(101):(202))");
+  EXPECT_EQ(D::Compute(e1), 101);
+
+  typename D::Expr e2 = LoadFromString<D>("TOp BOp - C 1 C 1 C 101 C 202 ");
+  EXPECT_EQ(D::AsString(e2), "(((1)-(1))?(101):(202))");
+  EXPECT_EQ(D::Compute(e2), 202);
+}
+
+template <typename D>
 void RunTests() {
   Test1<D>();
   // Test2<D>();
@@ -140,3 +147,8 @@ TEST(Expressions, KyExpressionsDD) { RunTests<KyExpressionsDriverDD>(); }
 TEST(ExpressionsTest2, AtExpressions) { Test2<AtExpressionsDriver>(); }
 TEST(ExpressionsTest2, KyExpressions) { Test2<KyExpressionsDriver>(); }
 TEST(ExpressionsTest2, KyExpressionsDD) { Test2<KyExpressionsDriverDD>(); }
+
+// TODO(ashish): uncomment the below when your code works
+// TEST(Expressions2, KyExpressions) { Test2<AtExpressionsDriver>(); }
+TEST(Expressions2, KyExpressions) { Test3<KyExpressionsDriver>(); }
+TEST(Expressions2, KyExpressionsDD) { Test3<KyExpressionsDriverDD>(); }

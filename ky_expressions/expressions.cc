@@ -2,6 +2,7 @@
 
 #include <map>
 #include <sstream>
+#include <iostream>
 
 namespace ky_expr {
 
@@ -48,6 +49,7 @@ int BinaryOperatorExpression::Compute() {
     case '^':
       return l_->Compute() ^ r_->Compute();
     default:
+      std::cerr << "bad operator" << std::endl;
       abort();
   }
 }
@@ -73,6 +75,42 @@ void BinaryOperatorExpression::Save(std::ostream &s) {
   r_->Save(s);
 }
 
+//--- TernaryOperatorExpression ---
+
+TernaryOperatorExpression::TernaryOperatorExpression(
+    std::unique_ptr<Expression> condition,
+    std::unique_ptr<Expression> onTrue,
+    std::unique_ptr<Expression> onFalse)
+    : condition_(std::move(condition)),
+      onTrue_(std::move(onTrue)),
+      onFalse_(std::move(onFalse)) {}
+
+int TernaryOperatorExpression::Compute() {
+  return condition_->Compute() ? onTrue_->Compute() : onFalse_->Compute();
+}
+
+std::string TernaryOperatorExpression::AsString() {
+  std::stringstream stream;
+  stream << "(" << condition_->AsString() << "?" << onTrue_->AsString() << ":"
+         << onFalse_->AsString() << ")";
+  return stream.str();
+}
+
+std::unique_ptr<Expression> TernaryOperatorExpression::Load(std::istream &s) {
+  return std::make_unique<TernaryOperatorExpression>(
+    std::move(Expression::Load(s)),
+    std::move(Expression::Load(s)),
+    std::move(Expression::Load(s))
+  );
+}
+
+void TernaryOperatorExpression::Save(std::ostream &s) {
+  s << "TOp ";
+  condition_->Save(s);
+  onTrue_->Save(s);
+  onFalse_->Save(s);
+}
+
 //--- Expression ---
 
 std::unique_ptr<Expression> Expression::Load(std::istream &s) {
@@ -83,12 +121,14 @@ std::unique_ptr<Expression> Expression::Load(std::istream &s) {
   if (!initialized) {
     loaders["C"] = ConstantExpression::Load;
     loaders["BOp"] = BinaryOperatorExpression::Load;
+    loaders["TOp"] = TernaryOperatorExpression::Load;
   }
 
   std::string key;
   s >> key;
   auto i = loaders.find(key);
   if (i == loaders.end()) {
+    std::cerr << "bad token" << std::endl;
     abort();
   }
   return i->second(s);
