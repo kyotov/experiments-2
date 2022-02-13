@@ -74,7 +74,7 @@ std::string OperatorNode<T>::ToStringWithParen() {
 
 template <typename T>
 void OperatorNode<T>::ToStream(std::ostream &out) {
-  out << kOperatorStr << " " << operator_ << kSeparator;
+  out << kBOperatorStr << " " << operator_ << kSeparator;
   left_.ToStream(out);
   right_.ToStream(out);
 }

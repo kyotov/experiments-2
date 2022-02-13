@@ -76,13 +76,13 @@ TEST_F(ExpressionsTests, BasicToStreamCheck) {  // NOLINT
   e.ToStream(out);
   LOG(INFO) << out.str();
   EXPECT_EQ(
-      kOperatorStr + " + " + kConstantStr + " 1 " + kConstantStr + " 2 ",
+      kBOperatorStr + " + " + kConstantStr + " 1 " + kConstantStr + " 2 ",
       out.str());
 }
 
 TEST_F(ExpressionsTests, BasicFromStreamCheck) {  // NOLINT
   std::stringstream stream(
-      kOperatorStr + " + " + kConstantStr + " 5 " + kConstantStr + " 2");
+      kBOperatorStr + " + " + kConstantStr + " 5 " + kConstantStr + " 2");
   auto e = ParseInput(stream);
   LOG(INFO) << "Result is: " << e.Eval();
   e.PrintAsTree(0);
@@ -91,7 +91,7 @@ TEST_F(ExpressionsTests, BasicFromStreamCheck) {  // NOLINT
 
 TEST_F(ExpressionsTests, BasicFromStreamDoubleCheck) {  // NOLINT
   std::stringstream stream(
-      kOperatorStr + " + " + kConstantStr + " 5.1 " + kConstantStr + " 2.2");
+      kBOperatorStr + " + " + kConstantStr + " 5.1 " + kConstantStr + " 2.2");
   auto e = ParseInputD(stream);
   LOG(INFO) << "Result is: " << e.Eval();
   e.PrintAsTree(0);
@@ -108,8 +108,8 @@ TEST_F(ExpressionsTests, ToFromStreamCheck) {  // NOLINT
   e.ToStream(stream);
   LOG(INFO) << stream.str();
   EXPECT_EQ(
-      kOperatorStr + " - " + kOperatorStr + " + " + kConstantStr + " 1 " +
-          kOperatorStr + " * " + kConstantStr + " 2 " + kConstantStr + " 3 " +
+      kBOperatorStr + " - " + kBOperatorStr + " + " + kConstantStr + " 1 " +
+          kBOperatorStr + " * " + kConstantStr + " 2 " + kConstantStr + " 3 " +
           kConstantStr + " 4 ",
       stream.str());
   stream.seekg(0);

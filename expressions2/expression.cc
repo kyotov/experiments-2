@@ -20,7 +20,7 @@ Expression<T>::Expression(std::istream& in)
       operator_node_cache_(nullptr) {
   std::string specifier;
   in >> specifier;
-  if (specifier == kOperatorStr) {
+  if (specifier == kBOperatorStr) {
     operator_node_cache_ = std::make_unique<OperatorNode<T>>(in);
   } else {
     CHECK(specifier == kConstantStr) << "Unexpected: " << specifier;
