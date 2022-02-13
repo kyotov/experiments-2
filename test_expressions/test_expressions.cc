@@ -121,10 +121,9 @@ void Test1() {
 
 template <typename D>
 void Test2() {
-  auto c1 = D::C(2);
-  auto e1 = D::BOp('+', c1, c1);
+  auto e1 = D::BOp('+', D::C(2), D::C(2));
   ASSERT_EQ(D::Compute(e1), 4);
-  auto e2 = D::BOp('+', e1, c1);
+  auto e2 = D::BOp('+', std::move(e1), D::C(2));
   ASSERT_EQ(D::Compute(e2), 6);
 }
 
@@ -135,6 +134,9 @@ void RunTests() {
 }
 
 TEST(Expressions, AtExpressions) { RunTests<AtExpressionsDriver>(); }
-TEST(ExpressionsTest2, AtExpressions) { Test2<AtExpressionsDriver>(); }
 TEST(Expressions, KyExpressions) { RunTests<KyExpressionsDriver>(); }
 TEST(Expressions, KyExpressionsDD) { RunTests<KyExpressionsDriverDD>(); }
+
+TEST(ExpressionsTest2, AtExpressions) { Test2<AtExpressionsDriver>(); }
+TEST(ExpressionsTest2, KyExpressions) { Test2<KyExpressionsDriver>(); }
+TEST(ExpressionsTest2, KyExpressionsDD) { Test2<KyExpressionsDriverDD>(); }
