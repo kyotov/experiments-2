@@ -34,6 +34,7 @@ int Expressions::Compute(Expressions::Expr &e) {
           result_ = l ^ r;
           break;
         default:
+          std::cerr << "unknown operator " << e.GetOp() << std::endl;
           abort();
       }
     }

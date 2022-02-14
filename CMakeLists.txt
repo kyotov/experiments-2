@@ -16,10 +16,13 @@ list(APPEND CMAKE_PREFIX_PATH
     ${CMAKE_BINARY_DIR}/deps/install/gflags
     ${CMAKE_BINARY_DIR}/deps/install/glog
     ${CMAKE_BINARY_DIR}/deps/install/GTest
+    ${CMAKE_BINARY_DIR}/deps/install/benchmark
 )
 find_package(gflags REQUIRED NO_MODULE)
 find_package(glog REQUIRED NO_MODULE)
 find_package(GTest REQUIRED NO_MODULE)
+find_package(benchmark REQUIRED NO_MODULE)
+
 include(GoogleTest)
 
 # Specify settings for clang-tidy
