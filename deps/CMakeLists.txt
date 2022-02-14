@@ -18,7 +18,7 @@ ExternalProject_Add(gflags
     -DGFLAGS_BUILD_TESTING=FALSE    
 )
 
-ExternalProject_add(glog
+ExternalProject_Add(glog
     GIT_REPOSITORY https://github.com/google/glog.git
     GIT_TAG 96a2f23dca4cc7180821ca5f32e526314395d26a # v0.4.0
 
@@ -45,3 +45,13 @@ ExternalProject_add(
 )
 # For Windows: Prevent overriding the parent project's compiler/linker settings
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+
+ExternalProject_Add(benchmark
+    GIT_REPOSITORY https://github.com/google/benchmark.git
+    GIT_TAG 0d98dba29d66e93259db7daa53a9327df767a415 # v1.6.1
+
+    CMAKE_ARGS
+    -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
+    -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_BINARY_DIR}/install/benchmark
+    -DBENCHMARK_ENABLE_GTEST_TESTS=OFF
+)
