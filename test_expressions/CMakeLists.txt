@@ -20,3 +20,4 @@ target_link_libraries(benchmark_expressions
     expressions2
     benchmark::benchmark
 )
+set_target_properties(benchmark_expressions PROPERTIES CXX_CLANG_TIDY "")

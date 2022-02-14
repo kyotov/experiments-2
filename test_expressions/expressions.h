@@ -21,6 +21,13 @@ public:
   static Expr BinaryOperatorExpression(char op, Expr l, Expr r) {
     return code_experiments::Expr(std::move(l), op, std::move(r));
   }
+  static Expr TernaryOperatorExpression(Expr c, Expr t, Expr f) {
+    return code_experiments::Expr(
+        '?',
+        std::move(c),
+        std::move(t),
+        std::move(f));
+  }
 };
 
 class KyExpressionsCommon {
@@ -40,8 +47,9 @@ public:
 
   static Expr TernaryOperatorExpression(Expr c, Expr t, Expr f) {
     return std::make_unique<ky_expr::TernaryOperatorExpression>(
-      std::move(c), std::move(t), std::move(f)
-    );
+        std::move(c),
+        std::move(t),
+        std::move(f));
   }
 };
 
@@ -58,7 +66,7 @@ public:
 };
 
 // Kamen's Double Dynamic Dispatch Driver
-class KyExpressionsDriverDD : public KyExpressionsCommon  {
+class KyExpressionsDriverDD : public KyExpressionsCommon {
 public:
   static int Compute(Expr &e) { return ky_expr::Expressions::Compute(e); }
 
