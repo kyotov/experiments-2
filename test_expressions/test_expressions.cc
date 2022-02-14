@@ -51,11 +51,22 @@ void Test4() {
 }
 
 template <typename D>
+void Test5() {
+  std::string s = "BOp + C 1 C 1 ";
+  for (int i = 0; i < 20; i++) {
+    s = "BOp + " + s + s;
+  }
+  typename D::Expr e = LoadFromString<D>(s);
+  ASSERT_EQ(D::Compute(e), 2097152);
+}
+
+template <typename D>
 void RunTests() {
   Test1<D>();
   Test2<D>();
   Test3<D>();
   Test4<D>();
+  Test5<D>();
 }
 
 TEST(Expressions, AtExpressions) { RunTests<AtExpressionsDriver>(); }
