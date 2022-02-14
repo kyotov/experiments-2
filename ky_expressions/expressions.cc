@@ -113,6 +113,74 @@ void TernaryOperatorExpression::Save(std::ostream &s) {
   onFalse_->Save(s);
 }
 
+//--- FunctionCallExpression ---
+
+FunctionCallExpression::FunctionCallExpression(
+    std::string name,
+    std::vector<std::unique_ptr<Expression>> parameters)
+    : name_(std::move(name)),
+      parameters_(std::move(parameters)) {}
+
+int FunctionCallExpression::Compute() {
+  auto fold = name_ == "min" ? [](int x, int y) { return x < y ? x : y; }
+              : name_ == "max"
+                  ? [](int x, int y) { return x < y ? x : y; }
+                  : [](int x, int y) {
+                      std::cerr << "unknown function " << std::endl;
+                      abort();
+                      return 0;
+                    };
+
+  bool first = true;
+  int result;
+  for (const auto &parameter : parameters_) {
+    result = first ? (first = false, parameter->Compute())
+                   : fold(result, parameter->Compute());
+  }
+
+  return result;
+}
+
+std::string FunctionCallExpression::AsString() {
+  std::stringstream stream;
+  stream << name_ << "(";
+  bool first = true;
+  for (const auto &parameter : parameters_) {
+    if (first) {
+      first = false;
+    } else {
+      stream << ",";
+    }
+    stream << parameter->AsString();
+  }
+  stream << ")";
+  return stream.str();
+}
+
+std::unique_ptr<Expression> FunctionCallExpression::Load(std::istream &s) {
+  std::string name;
+  s >> name;
+
+  int count;
+  s >> count;
+
+  std::vector<std::unique_ptr<Expression>> parameters;
+  while (count--) {
+    parameters.push_back(Expression::Load(s));
+  }
+
+  return std::make_unique<FunctionCallExpression>(
+      std::move(name),
+      std::move(parameters));
+}
+
+void FunctionCallExpression::Save(std::ostream &s) {
+  s << "Fx " << name_ << " " << parameters_.size() << " ";
+  for (const auto &parameter : parameters_) {
+    parameter->Save(s);
+  }
+}
+
 //--- Expression ---
 
 std::unique_ptr<Expression> Expression::Load(std::istream &s) {
@@ -124,13 +192,14 @@ std::unique_ptr<Expression> Expression::Load(std::istream &s) {
     loaders["C"] = ConstantExpression::Load;
     loaders["BOp"] = BinaryOperatorExpression::Load;
     loaders["TOp"] = TernaryOperatorExpression::Load;
+    loaders["Fx"] = FunctionCallExpression::Load;
   }
 
   std::string key;
   s >> key;
   auto i = loaders.find(key);
   if (i == loaders.end()) {
-    std::cerr << "bad token" << std::endl;
+    std::cerr << "bad token: " << key << std::endl;
     abort();
   }
   return i->second(s);

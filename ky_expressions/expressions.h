@@ -2,17 +2,22 @@
 #define KY_EXPRESSIONS_H
 
 #include <memory>
+#include <string>
+#include <vector>
 
 namespace ky_expr {
 
 class ConstantExpression;
 class BinaryOperatorExpression;
 class TernaryOperatorExpression;
+class FunctionCallExpression;
+
 class ExpressionVisitor {
 public:
   virtual void Visit(ConstantExpression &) = 0;
   virtual void Visit(BinaryOperatorExpression &) = 0;
   virtual void Visit(TernaryOperatorExpression &) = 0;
+  virtual void Visit(FunctionCallExpression &) = 0;
 };
 
 class Expression {
@@ -94,6 +99,30 @@ private:
   std::unique_ptr<Expression> condition_;
   std::unique_ptr<Expression> onTrue_;
   std::unique_ptr<Expression> onFalse_;
+};
+
+class FunctionCallExpression final : public Expression {
+public:
+  FunctionCallExpression(
+      std::string name,
+      std::vector<std::unique_ptr<Expression>> parameters);
+
+  int Compute() override;
+  std::string AsString() override;
+
+  void Accept(ExpressionVisitor &visitor) override { visitor.Visit(*this); }
+
+  static std::unique_ptr<Expression> Load(std::istream &s);
+  void Save(std::ostream &s) override;
+
+  const std::string &GetName() { return name_; }
+  const std::vector<std::unique_ptr<Expression>> &GetParameters() {
+    return parameters_;
+  };
+
+private:
+  std::string name_;
+  std::vector<std::unique_ptr<Expression>> parameters_;
 };
 
 }  // namespace ky_expr

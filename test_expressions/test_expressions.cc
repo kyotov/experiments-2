@@ -144,6 +144,14 @@ void Test3() {
 
 template <typename D>
 void Test4() {
+  typename D::Expr e =
+      LoadFromString<D>("Fx min 5 C 2 BOp - C 4 C 7 C 1 C 3 C 5 ");
+  EXPECT_EQ(D::AsString(e), "min((2),((4)-(7)),(1),(3),(5))");
+  EXPECT_EQ(D::Compute(e), -3);
+}
+
+template <typename D>
+void Test5() {
   auto ct = D::C(1);
   auto e1 = D::TernaryOperatorExpression(std::move(ct), D::C(4), D::C(6));
   ASSERT_EQ(D::Compute(e1), 4);
@@ -162,14 +170,20 @@ void RunTests() {
   Test1<D>();
   Test2<D>();
   Test3<D>();
-  Test4<D>();
+  Test5<D>();
 }
 
 TEST(Expressions, AtExpressions) { RunTests<AtExpressionsDriver>(); }
-// TODO(kamen): Uncomment the below when ternary logic updated.
-// TEST(Expressions, KyExpressions) { RunTests<KyExpressionsDriver>(); }
-// TEST(Expressions, KyExpressionsDD) { RunTests<KyExpressionsDriverDD>(); }
+TEST(Expressions, KyExpressions) { RunTests<KyExpressionsDriver>(); }
+TEST(Expressions, KyExpressionsDD) { RunTests<KyExpressionsDriverDD>(); }
 
-TEST(Expressions2, AtExpressions) { Test3<AtExpressionsDriver>(); }
-// TEST(Expressions2, KyExpressions) { Test3<KyExpressionsDriver>(); }
-// TEST(Expressions2, KyExpressionsDD) { Test3<KyExpressionsDriverDD>(); }
+TEST(Expressions2, AtExpressions) { Test2<AtExpressionsDriver>(); }
+TEST(Expressions2, KyExpressions) { Test2<KyExpressionsDriver>(); }
+TEST(Expressions2, KyExpressionsDD) { Test2<KyExpressionsDriverDD>(); }
+
+TEST(Expressions3, AtExpressions) { Test3<AtExpressionsDriver>(); }
+TEST(Expressions3, KyExpressions) { Test3<KyExpressionsDriver>(); }
+TEST(Expressions3, KyExpressionsDD) { Test3<KyExpressionsDriverDD>(); }
+
+TEST(Expressions4, KyExpressions) { Test4<KyExpressionsDriver>(); }
+TEST(Expressions4, KyExpressionsDD) { Test4<KyExpressionsDriverDD>(); }

@@ -1,5 +1,6 @@
 #include "expressions_dd.h"
 
+#include <iostream>
 #include <sstream>
 
 namespace ky_expr {
@@ -47,6 +48,26 @@ int Expressions::Compute(Expressions::Expr &e) {
       result_ = c ? t : f;
     }
 
+    void Visit(FunctionCallExpression &e) {
+      auto fold = e.GetName() == "min"
+                      ? [](int x, int y) { return x < y ? x : y; }
+                  : e.GetName() == "max"
+                      ? [](int x, int y) { return x < y ? x : y; }
+                      : [](int x, int y) {
+                          std::cerr << "unknown function " << std::endl;
+                          abort();
+                          return 0;
+                        };
+
+      bool first = true;
+      int result;
+      for (const auto &parameter : e.GetParameters()) {
+        parameter->Accept(*this);
+        result = first ? first = false, result_ : fold(result, result_);
+      }
+      result_ = result;
+    }
+
     int result_;
   } v;
 
@@ -85,6 +106,23 @@ std::string Expressions::AsString(Expressions::Expr &e) {
       result_ = stream.str();
     }
 
+    void Visit(FunctionCallExpression &e) {
+      std::stringstream stream;
+      stream << e.GetName() << "(";
+      bool first = true;
+      for (const auto &parameter : e.GetParameters()) {
+        if (first) {
+          first = false;
+        } else {
+          stream << ",";
+        }
+        parameter->Accept(*this);
+        stream << result_;
+      }
+      stream << ")";
+      result_ = stream.str();
+    }
+
     std::string result_;
   } v;
 
@@ -113,7 +151,14 @@ void Expressions::Save(Expressions::Expr &e, std::ostream &s) {
       e.GetOnTrue().Accept(*this);
       e.GetOnFalse().Accept(*this);
     }
-    
+
+    void Visit(FunctionCallExpression &e) {
+      s_ << "Fx " << e.GetName() << " " << e.GetParameters().size() << " ";
+      for (const auto &parameter : e.GetParameters()) {
+        parameter->Save(s_);
+      }
+    }
+
     std::ostream &s_;
   } v(s);
 
