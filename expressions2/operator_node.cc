@@ -49,6 +49,5 @@ void OperatorNode<T>::ToStream(std::ostream &out) {
 }
 
 template class OperatorNode<int>;
-template class OperatorNode<double>;
 
 }  // namespace code_experiments

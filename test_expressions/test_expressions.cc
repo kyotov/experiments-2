@@ -62,7 +62,7 @@ template <typename D>
 void RunTests() {
   Test1<D>();
   Test2<D>();
-  Test3<D>();
+  // Test3<D>();
   // Test5<D>();
 }
 
@@ -74,7 +74,7 @@ TEST(Expressions2, AtExpressions) { Test2<AtExpressionsDriver>(); }
 TEST(Expressions2, KyExpressions) { Test2<KyExpressionsDriver>(); }
 TEST(Expressions2, KyExpressionsDD) { Test2<KyExpressionsDriverDD>(); }
 
-TEST(Expressions3, AtExpressions) { Test3<AtExpressionsDriver>(); }
+// TEST(Expressions3, AtExpressions) { Test3<AtExpressionsDriver>(); }
 TEST(Expressions3, KyExpressions) { Test3<KyExpressionsDriver>(); }
 TEST(Expressions3, KyExpressionsDD) { Test3<KyExpressionsDriverDD>(); }
 

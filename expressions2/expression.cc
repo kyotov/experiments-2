@@ -118,6 +118,5 @@ void Expression<T>::ToStream(std::ostream& out) {
 }
 
 template class Expression<int>;
-template class Expression<double>;
 
 }  // namespace code_experiments

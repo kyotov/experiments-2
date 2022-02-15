@@ -61,13 +61,6 @@ TEST_F(ExpressionsTests, BasicReadabilityCheck) {  // NOLINT
   EXPECT_EQ(e.Eval(), 3);
 }
 
-TEST_F(ExpressionsTests, BasicDoubleCheck) {  // NOLINT
-  std::string input("1.1+2*1.5");
-  auto e = ParseInputD(input);
-  LOG(INFO) << "Result is: " << e.Eval();
-  EXPECT_EQ(e.Eval(), 4.1);
-}
-
 TEST_F(ExpressionsTests, BasicToStreamCheck) {  // NOLINT
   std::string input("1+2");
   auto e = ParseInput(input);
@@ -87,15 +80,6 @@ TEST_F(ExpressionsTests, BasicFromStreamCheck) {  // NOLINT
   LOG(INFO) << "Result is: " << e.Eval();
   e.PrintAsTree(0);
   EXPECT_EQ(7, e.Eval());
-}
-
-TEST_F(ExpressionsTests, BasicFromStreamDoubleCheck) {  // NOLINT
-  std::stringstream stream(
-      kBOperatorStr + " + " + kConstantStr + " 5.1 " + kConstantStr + " 2.2");
-  auto e = ParseInputD(stream);
-  LOG(INFO) << "Result is: " << e.Eval();
-  e.PrintAsTree(0);
-  EXPECT_EQ(7.3, e.Eval());
 }
 
 TEST_F(ExpressionsTests, ToFromStreamCheck) {  // NOLINT
