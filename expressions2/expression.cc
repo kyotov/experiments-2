@@ -15,22 +15,6 @@ Expression<T>::Expression(const std::string& expr)
 }
 
 template <typename T>
-Expression<T>::Expression(std::istream& in)
-    : simplified_value_(-1),
-      operator_node_cache_(nullptr) {
-  std::string specifier;
-  in >> specifier;
-  if (specifier == kBOperatorStr || specifier == kTOperatorStr) {
-    operator_node_cache_ = std::make_unique<OperatorNode<T>>(in, specifier);
-  } else {
-    CHECK(specifier == kConstantStr) << "Unexpected: " << specifier;
-    std::string expr;
-    in >> expr;
-    simplified_value_ = GetSimplifiedVal(expr);
-  }
-}
-
-template <typename T>
 Expression<T>& Expression<T>::operator=(Expression<T>&& from) noexcept {
   simplified_value_ = from.simplified_value_;
   operator_node_cache_ = std::move(from.operator_node_cache_);
@@ -66,32 +50,9 @@ Expression<T>::Expression(Expression<T>&& left, char op, Expression<T>&& right)
           std::move(right))) {}
 
 template <typename T>
-Expression<T>::Expression(
-    char op,
-    Expression<T>&& ternary,
-    Expression<T>&& left,
-    Expression<T>&& right)
-    : simplified_value_(-1),
-      operator_node_cache_(std::make_unique<OperatorNode<T>>(
-          op,
-          std::move(ternary),
-          std::move(left),
-          std::move(right))) {
-  CHECK(op == '?') << "'?' is the only allowed ternary operator at this time";
-}
-
-template <typename T>
 Expression<T>::Expression()
     : simplified_value_(-1),
       operator_node_cache_(nullptr) {}
-
-template <typename T>
-T Expression<T>::Eval() {
-  if (operator_node_cache_ != nullptr) {
-    return operator_node_cache_->Eval();
-  }
-  return simplified_value_;
-}
 
 template <typename T>
 int Expression<T>::GetOperatorIndex(const std::string& expr) const {
@@ -122,11 +83,6 @@ void Expression<T>::Parse(const std::string& expr) {
   } else {
     simplified_value_ = GetSimplifiedVal(expr);
   }
-}
-
-template <typename T>
-T Expression<T>::GetSimplifiedVal(const std::string& expr) const {
-  return expr.empty() ? 0 : std::stoi(expr);
 }
 
 template <>

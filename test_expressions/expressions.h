@@ -21,13 +21,6 @@ public:
   static Expr BinaryOperatorExpression(char op, Expr l, Expr r) {
     return code_experiments::Expr(std::move(l), op, std::move(r));
   }
-  static Expr TernaryOperatorExpression(Expr c, Expr t, Expr f) {
-    return code_experiments::Expr(
-        '?',
-        std::move(c),
-        std::move(t),
-        std::move(f));
-  }
 };
 
 class KyExpressionsCommon {
