@@ -10,3 +10,10 @@ target_link_libraries(expressions_tests2
     PRIVATE GTest::gtest_main
     PRIVATE expressions2)
 gtest_discover_tests(expressions_tests2)
+
+add_executable(expressionsv_tests2 expressionsv_tests.cc)
+target_link_libraries(expressionsv_tests2
+    PRIVATE glog::glog
+    PRIVATE GTest::gtest
+    PRIVATE GTest::gtest_main)
+gtest_discover_tests(expressionsv_tests2)

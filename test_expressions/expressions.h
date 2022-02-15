@@ -4,6 +4,7 @@
 #include <sstream>
 
 #include "../expressions2/utils.h"
+#include "../expressions2/zexpressionsv.h"
 #include "../ky_expressions/expressions.h"
 #include "../ky_expressions/expressions_dd.h"
 
@@ -28,6 +29,31 @@ public:
         std::move(t),
         std::move(f));
   }
+};
+
+class AtExpressionsDriverV {
+public:
+  using Expr = code_experiments::ExprV;
+
+  static int Compute(Expr &e) { return code_experiments::ExprEval(e); }
+  // static std::string AsString(Expr &e) { return e.ToStringWithParen(); }
+  // static void Save(Expr &e, std::ostream &s) { e.ToStream(s); }
+  static Expr Load(std::istream &s) {
+    return code_experiments::CreateFromStream(s);
+  }
+  // static Expr ConstantExpression(int value) {
+  //   return code_experiments::Expr(value);
+  // }
+  // static Expr BinaryOperatorExpression(char op, Expr l, Expr r) {
+  //   return code_experiments::Expr(std::move(l), op, std::move(r));
+  // }
+  // static Expr TernaryOperatorExpression(Expr c, Expr t, Expr f) {
+  //   return code_experiments::Expr(
+  //       '?',
+  //       std::move(c),
+  //       std::move(t),
+  //       std::move(f));
+  // }
 };
 
 class KyExpressionsCommon {
