@@ -28,7 +28,9 @@ OperatorNode<T>::OperatorNode(
     Expression<T> &&right)
     : operator_(op),
       left_(std::move(left)),
-      right_(std::move(right)) {}
+      right_(std::move(right)) {
+  operands_.emplace_back(std::move(ternary));
+}
 
 template <typename T>
 OperatorNode<T>::OperatorNode(const OperatorNode<T> &from)
@@ -45,7 +47,12 @@ void OperatorNode<T>::PrintAsTree(int indent) {
 
 template <typename T>
 void OperatorNode<T>::ToStream(std::ostream &out) {
-  out << kBOperatorStr << kSeparator << operator_ << kSeparator;
+  if (operator_ == '?') {
+    out << kTOperatorStr << kSeparator;
+    operands_[0].ToStream(out);
+  } else {
+    out << kBOperatorStr << kSeparator << operator_ << kSeparator;
+  }
   left_.ToStream(out);
   right_.ToStream(out);
 }
