@@ -16,7 +16,21 @@ template <typename T>
 class Expression {
 public:
   explicit Expression(const std::string& expr);
-  explicit Expression(std::istream& in);
+  explicit inline Expression(std::istream& in)
+      : simplified_value_(-1),
+        operator_node_cache_(nullptr) {
+    std::string specifier;
+    in >> specifier;
+    if (specifier == kBOperatorStr || specifier == kTOperatorStr) {
+      operator_node_cache_ = std::make_unique<OperatorNode<T>>(in, specifier);
+    } else {
+      CHECK(specifier == kConstantStr) << "Unexpected: " << specifier;
+      std::string expr;
+      in >> expr;
+      simplified_value_ = GetSimplifiedVal(expr);
+    }
+  }
+
   Expression<T>& operator=(Expression<T>&& from) noexcept;
   Expression(Expression<T>&& from) noexcept;
   Expression();
@@ -32,7 +46,11 @@ public:
   ~Expression() = default;
   Expression<T>& operator=(Expression<T>& from) = delete;
 
-  [[nodiscard]] T Eval();
+  [[nodiscard]] inline T Eval() {
+    return (operator_node_cache_ != nullptr) ? operator_node_cache_->Eval()
+                                             : simplified_value_;
+  }
+
   void PrintAsTree(int indent);
   std::string ToStringWithParen();
   void ToStream(std::ostream& out);
