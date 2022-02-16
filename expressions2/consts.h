@@ -6,6 +6,7 @@ namespace code_experiments {
 const char kSeparator = ' ';
 const std::string kBOperatorStr = "BOp";
 const std::string kTOperatorStr = "TOp";
+const std::string kFxOperatorStr = "Fx";
 const std::string kConstantStr = "C";
 
 }  // namespace code_experiments

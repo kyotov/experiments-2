@@ -3,6 +3,7 @@
 
 #include <glog/logging.h>
 
+#include <algorithm>
 #include <cmath>
 
 #include "consts.h"
@@ -18,9 +19,18 @@ class OperatorNode {
 public:
   OperatorNode(const std::string &left, char op, const std::string &right);
   inline OperatorNode(std::istream &in, const std::string &specifier)
-      : operator_('?') {
+      : operator_('@') {
     if (specifier == kTOperatorStr) {
       operands_.emplace_back((in));
+      operator_ = '?';
+    } else if (specifier == kFxOperatorStr) {
+      in >> func_;
+      int size;
+      in >> size;
+      for (int i = 0; i < size; i++) {
+        operands_.emplace_back(in);
+      }
+      return;
     } else {
       in >> operator_;
     }
@@ -40,7 +50,36 @@ public:
   OperatorNode<T> &operator=(OperatorNode<T> &from) = delete;
   OperatorNode<T> &operator=(OperatorNode<T> &&from) noexcept = delete;
 
-  [[nodiscard]] inline T Eval() {
+  [[nodiscard]] T EvalFunc() const {
+    // auto comparison = [](const Expression<T> &e1, const Expression<T> &e2) {
+    //   return e1.Eval() < e2.Eval();
+    // };
+    if (func_ == "min") {
+      T min = std::numeric_limits<int>::max();
+      for (const auto &operand : operands_) {
+        T val = operand.Eval();
+        if (val < min) {
+          min = val;
+        }
+      }
+      return min;
+      // return std::min(operands_, comparison);
+    } else if (func_ == "max") {
+      T max = std::numeric_limits<int>::min();
+      for (const auto &operand : operands_) {
+        T val = operand.Eval();
+        if (val > max) {
+          max = val;
+        }
+      }
+      return max;
+      // return std::max(operands_, comparison);
+    } else {
+      CHECK(false) << "Unexpected function: " << func_;
+    }
+  }
+
+  [[nodiscard]] inline T Eval() const {
     T left = left_.Eval();
     T right = right_.Eval();
     switch (operator_) {
@@ -56,16 +95,28 @@ public:
         return std::pow(left, right);
       case '?':
         return operands_[0].Eval() ? left : right;
+      case '@':
+        return EvalFunc();
       default:
         LOG_ASSERT(false) << "Unexpected operator: " << operator_;
     }
   }
+
   void PrintAsTree(int indent);
 
   [[nodiscard]] inline std::string ToStringWithParen() {
     if (operator_ == '?') {
       return "(" + operands_[0].ToStringWithParen() + "?" +
              left_.ToStringWithParen() + ":" + right_.ToStringWithParen() + ")";
+    } else if (operator_ == '@') {
+      std::string out = func_ + "(";
+      // TODO(ashish): add consts
+      for (int i = 0; i < operands_.size(); i++) {
+        out.append(i == 0 ? "" : ",");
+        out.append(operands_[i].ToStringWithParen());
+      }
+      out.append(")");
+      return out;
     } else {
       return "(" + left_.ToStringWithParen() + operator_ +
              right_.ToStringWithParen() + ")";
@@ -78,6 +129,7 @@ private:
   Expression<T> left_;
   char operator_;
   Expression<T> right_;
+  std::string func_;
   std::vector<Expression<T>> operands_;
 };
 
