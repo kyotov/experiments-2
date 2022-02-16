@@ -19,11 +19,7 @@ public:
   OperatorNode(const std::string &left, char op, const std::string &right);
   inline OperatorNode(std::istream &in, const std::string &specifier)
       : operator_('?') {
-    if (specifier == kTOperatorStr) {
-      ternary_ = std::move(Expression<T>(in));
-    } else {
-      in >> operator_;
-    }
+    in >> operator_;
     left_ = std::move(Expression<T>(in));
     right_ = std::move(Expression<T>(in));
   }
@@ -54,22 +50,23 @@ public:
         return left / right;
       case '^':
         return std::pow(left, right);
-      case '?':
-        return ternary_.Eval() != 0 ? left : right;
       default:
         LOG_ASSERT(false) << "Unexpected operator: " << operator_;
     }
   }
   void PrintAsTree(int indent);
-  [[nodiscard]] std::string ToStringWithParen();
+
+  [[nodiscard]] inline std::string ToStringWithParen() {
+    return "(" + left_.ToStringWithParen() + operator_ +
+           right_.ToStringWithParen() + ")";
+  }
+
   void ToStream(std::ostream &out);
 
 private:
   Expression<T> left_;
   char operator_;
   Expression<T> right_;
-  // NOTE: Further extension will likely be through n-ary form.
-  Expression<T> ternary_;
 };
 
 }  // namespace code_experiments

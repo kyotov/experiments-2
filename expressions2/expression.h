@@ -21,10 +21,9 @@ public:
         operator_node_cache_(nullptr) {
     std::string specifier;
     in >> specifier;
-    if (specifier == kBOperatorStr || specifier == kTOperatorStr) {
+    if (specifier == kBOperatorStr) {
       operator_node_cache_ = std::make_unique<OperatorNode<T>>(in, specifier);
     } else {
-      CHECK(specifier == kConstantStr) << "Unexpected: " << specifier;
       std::string expr;
       in >> expr;
       simplified_value_ = GetSimplifiedVal(expr);
@@ -52,7 +51,13 @@ public:
   }
 
   void PrintAsTree(int indent);
-  std::string ToStringWithParen();
+
+  inline std::string ToStringWithParen() {
+    return (operator_node_cache_ != nullptr)
+               ? operator_node_cache_->ToStringWithParen()
+               : "(" + std::to_string(simplified_value_) + ")";
+  }
+
   void ToStream(std::ostream& out);
 
 private:
