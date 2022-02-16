@@ -23,11 +23,10 @@ OperatorNode<T>::OperatorNode(
 template <typename T>
 OperatorNode<T>::OperatorNode(
     char op,
-    Expression<T> &&ternary,
+    Expression<T> &&ternary,  // NOLINT
     Expression<T> &&left,
     Expression<T> &&right)
     : operator_(op),
-      ternary_(std::move(ternary)),
       left_(std::move(left)),
       right_(std::move(right)) {}
 
@@ -45,28 +44,8 @@ void OperatorNode<T>::PrintAsTree(int indent) {
 }
 
 template <typename T>
-std::string OperatorNode<T>::ToStringWithParen() {
-  switch (operator_) {
-    case '?':
-      return "(" + ternary_.ToStringWithParen() + operator_ +
-             left_.ToStringWithParen() + ":" + right_.ToStringWithParen() + ")";
-    default:
-      return "(" + left_.ToStringWithParen() + operator_ +
-             right_.ToStringWithParen() + ")";
-  }
-}
-
-template <typename T>
 void OperatorNode<T>::ToStream(std::ostream &out) {
-  switch (operator_) {
-    case '?':
-      out << kTOperatorStr << kSeparator;
-      ternary_.ToStream(out);
-      break;
-    default:
-      out << kBOperatorStr << kSeparator << operator_ << kSeparator;
-      break;
-  }
+  out << kBOperatorStr << kSeparator << operator_ << kSeparator;
   left_.ToStream(out);
   right_.ToStream(out);
 }

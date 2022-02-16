@@ -121,14 +121,6 @@ void Expression<T>::PrintAsTree(int indent) {
 }
 
 template <typename T>
-std::string Expression<T>::ToStringWithParen() {
-  if (operator_node_cache_ != nullptr) {
-    return operator_node_cache_->ToStringWithParen();
-  }
-  return "(" + std::to_string(simplified_value_) + ")";
-}
-
-template <typename T>
 void Expression<T>::ToStream(std::ostream& out) {
   if (operator_node_cache_ != nullptr) {
     operator_node_cache_->ToStream(out);
