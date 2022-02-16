@@ -21,12 +21,12 @@ public:
         operator_node_cache_(nullptr) {
     std::string specifier;
     in >> specifier;
-    if (specifier == kBOperatorStr || specifier == kTOperatorStr) {
-      operator_node_cache_ = std::make_unique<OperatorNode<T>>(in, specifier);
-    } else {
+    if (specifier == kConstantStr) {
       std::string expr;
       in >> expr;
       simplified_value_ = GetSimplifiedVal(expr);
+    } else {
+      operator_node_cache_ = std::make_unique<OperatorNode<T>>(in, specifier);
     }
   }
 
@@ -45,7 +45,7 @@ public:
   ~Expression() = default;
   Expression<T>& operator=(Expression<T>& from) = delete;
 
-  [[nodiscard]] inline T Eval() {
+  [[nodiscard]] inline T Eval() const {
     return (operator_node_cache_ != nullptr) ? operator_node_cache_->Eval()
                                              : simplified_value_;
   }
