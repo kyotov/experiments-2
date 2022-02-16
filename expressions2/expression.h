@@ -40,8 +40,7 @@ public:
       Expression<T>&& left,
       Expression<T>&& right);
   Expression(T constant);
-  Expression(const Expression<T>& from);
-
+  Expression(const Expression<T>& from) = delete;
   ~Expression() = default;
   Expression<T>& operator=(Expression<T>& from) = delete;
 

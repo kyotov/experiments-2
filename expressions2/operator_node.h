@@ -44,7 +44,7 @@ public:
       Expression<T> &&ternary,
       Expression<T> &&left,
       Expression<T> &&right);
-  OperatorNode(const OperatorNode<T> &from);
+  OperatorNode(const OperatorNode<T> &from) = delete;
   OperatorNode(OperatorNode<T> &&from) noexcept = delete;
   ~OperatorNode() = default;
   OperatorNode<T> &operator=(OperatorNode<T> &from) = delete;
