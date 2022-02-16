@@ -21,7 +21,7 @@ public:
         operator_node_cache_(nullptr) {
     std::string specifier;
     in >> specifier;
-    if (specifier == kBOperatorStr) {
+    if (specifier == kBOperatorStr || specifier == kTOperatorStr) {
       operator_node_cache_ = std::make_unique<OperatorNode<T>>(in, specifier);
     } else {
       std::string expr;

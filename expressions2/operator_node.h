@@ -19,7 +19,11 @@ public:
   OperatorNode(const std::string &left, char op, const std::string &right);
   inline OperatorNode(std::istream &in, const std::string &specifier)
       : operator_('?') {
-    in >> operator_;
+    if (specifier == kTOperatorStr) {
+      operands_.emplace_back((in));
+    } else {
+      in >> operator_;
+    }
     left_ = std::move(Expression<T>(in));
     right_ = std::move(Expression<T>(in));
   }
@@ -50,6 +54,8 @@ public:
         return left / right;
       case '^':
         return std::pow(left, right);
+      case '?':
+        return operands_[0].Eval() ? left : right;
       default:
         LOG_ASSERT(false) << "Unexpected operator: " << operator_;
     }
@@ -57,8 +63,13 @@ public:
   void PrintAsTree(int indent);
 
   [[nodiscard]] inline std::string ToStringWithParen() {
-    return "(" + left_.ToStringWithParen() + operator_ +
-           right_.ToStringWithParen() + ")";
+    if (operator_ == '?') {
+      return "(" + operands_[0].ToStringWithParen() + "?" +
+             left_.ToStringWithParen() + ":" + right_.ToStringWithParen() + ")";
+    } else {
+      return "(" + left_.ToStringWithParen() + operator_ +
+             right_.ToStringWithParen() + ")";
+    }
   }
 
   void ToStream(std::ostream &out);
@@ -67,6 +78,7 @@ private:
   Expression<T> left_;
   char operator_;
   Expression<T> right_;
+  std::vector<Expression<T>> operands_;
 };
 
 }  // namespace code_experiments
