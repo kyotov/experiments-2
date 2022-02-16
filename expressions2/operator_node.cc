@@ -7,54 +7,54 @@ OperatorNode<T>::OperatorNode(
     const std::string &left,
     char op,
     const std::string &right)
-    : left_(left),
-      operator_(op),
-      right_(right) {}
-
-template <typename T>
-OperatorNode<T>::OperatorNode(
-    Expression<T> &&left,
-    char op,
-    Expression<T> &&right)
-    : left_(std::move(left)),
-      operator_(op),
-      right_(std::move(right)) {}
-
-template <typename T>
-OperatorNode<T>::OperatorNode(
-    char op,
-    Expression<T> &&ternary,  // NOLINT
-    Expression<T> &&left,
-    Expression<T> &&right)
-    : operator_(op),
-      left_(std::move(left)),
-      right_(std::move(right)) {
-  operands_.emplace_back(std::move(ternary));
+    : func_(1, op) {
+  operands_.emplace_back(left);
+  operands_.emplace_back(right);
 }
 
 template <typename T>
-OperatorNode<T>::OperatorNode(const OperatorNode<T> &from)
-    : left_(from.left_),
-      operator_(from.operator_),
-      right_(from.right_) {}
+OperatorNode<T>::OperatorNode(
+    Expression<T> &&left,     // NOLINT
+    char op,                  // NOLINT
+    Expression<T> &&right) {  // NOLINT
+  CHECK(false) << "Unexpected call";
+}
+
+template <typename T>
+OperatorNode<T>::OperatorNode(
+    char op,                  // NOLINT
+    Expression<T> &&ternary,  // NOLINT
+    Expression<T> &&left,     // NOLINT
+    Expression<T> &&right) {  // NOLINT
+  CHECK(false) << "Unexpected call";
+}
+
+template <typename T>
+OperatorNode<T>::OperatorNode(const OperatorNode<T> &from) {  // NOLINT
+  CHECK(false) << "Unexpected call";
+}
 
 template <typename T>
 void OperatorNode<T>::PrintAsTree(int indent) {
-  std::cout << std::string(indent, kSeparator) << operator_ << std::endl;
-  left_.PrintAsTree(indent + 1);
-  right_.PrintAsTree(indent + 1);
+  std::cout << std::string(indent, kSeparator) << func_ << std::endl;
+  operands_[0].PrintAsTree(indent + 1);
+  operands_[1].PrintAsTree(indent + 1);
 }
 
 template <typename T>
 void OperatorNode<T>::ToStream(std::ostream &out) {
-  if (operator_ == '?') {
+  if (func_.size() > 1) {
+    out << kFxOperatorStr << kSeparator;
+    out << func_;
+    out << operands_.size();
+  } else if (func_[0] == '?') {
     out << kTOperatorStr << kSeparator;
-    operands_[0].ToStream(out);
   } else {
-    out << kBOperatorStr << kSeparator << operator_ << kSeparator;
+    out << kBOperatorStr << kSeparator << func_[0] << kSeparator;
   }
-  left_.ToStream(out);
-  right_.ToStream(out);
+  for (auto &operand : operands_) {
+    operand.ToStream(out);
+  }
 }
 
 template class OperatorNode<int>;

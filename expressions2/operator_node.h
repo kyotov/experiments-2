@@ -18,24 +18,20 @@ template <typename T>
 class OperatorNode {
 public:
   OperatorNode(const std::string &left, char op, const std::string &right);
-  inline OperatorNode(std::istream &in, const std::string &specifier)
-      : operator_('@') {
+  inline OperatorNode(std::istream &in, const std::string &specifier) {
+    int num_operands = 2;
     if (specifier == kTOperatorStr) {
-      operands_.emplace_back((in));
-      operator_ = '?';
+      num_operands = 3;
+      func_ = "?";
     } else if (specifier == kFxOperatorStr) {
       in >> func_;
-      int size;
-      in >> size;
-      for (int i = 0; i < size; i++) {
-        operands_.emplace_back(in);
-      }
-      return;
+      in >> num_operands;
     } else {
-      in >> operator_;
+      in >> func_;
     }
-    left_ = std::move(Expression<T>(in));
-    right_ = std::move(Expression<T>(in));
+    for (int i = 0; i < num_operands; i++) {
+      operands_.emplace_back(in);
+    }
   }
 
   OperatorNode(Expression<T> &&left, char op, Expression<T> &&right);
@@ -80,55 +76,55 @@ public:
   }
 
   [[nodiscard]] inline T Eval() const {
-    T left = left_.Eval();
-    T right = right_.Eval();
-    switch (operator_) {
+    // NOTE: The below check will need to change if an operator can be the first
+    // character in a function name.
+    switch (func_[0]) {
       case '+':
-        return left + right;
+        return operands_[0].Eval() + operands_[1].Eval();
       case '-':
-        return left - right;
+        return operands_[0].Eval() - operands_[1].Eval();
       case '*':
-        return left * right;
+        return operands_[0].Eval() * operands_[1].Eval();
       case '/':
-        return left / right;
+        return operands_[0].Eval() / operands_[1].Eval();
       case '^':
-        return std::pow(left, right);
+        return std::pow(operands_[0].Eval(), operands_[1].Eval());
       case '?':
-        return operands_[0].Eval() ? left : right;
-      case '@':
-        return EvalFunc();
+        return operands_[0].Eval() ? operands_[1].Eval() : operands_[2].Eval();
       default:
-        LOG_ASSERT(false) << "Unexpected operator: " << operator_;
+        return EvalFunc();
     }
   }
 
   void PrintAsTree(int indent);
 
+  [[nodiscard]] inline std::string FuncToStringWithParen() {
+    std::string out = func_ + "(";
+    // TODO(ashish): add consts
+    for (int i = 0; i < operands_.size(); i++) {
+      out.append(i == 0 ? "" : ",");
+      out.append(operands_[i].ToStringWithParen());
+    }
+    out.append(")");
+    return out;
+  }
+
   [[nodiscard]] inline std::string ToStringWithParen() {
-    if (operator_ == '?') {
+    if (func_.size() > 1) {
+      return FuncToStringWithParen();
+    } else if (func_[0] == '?') {
       return "(" + operands_[0].ToStringWithParen() + "?" +
-             left_.ToStringWithParen() + ":" + right_.ToStringWithParen() + ")";
-    } else if (operator_ == '@') {
-      std::string out = func_ + "(";
-      // TODO(ashish): add consts
-      for (int i = 0; i < operands_.size(); i++) {
-        out.append(i == 0 ? "" : ",");
-        out.append(operands_[i].ToStringWithParen());
-      }
-      out.append(")");
-      return out;
+             operands_[1].ToStringWithParen() + ":" +
+             operands_[2].ToStringWithParen() + ")";
     } else {
-      return "(" + left_.ToStringWithParen() + operator_ +
-             right_.ToStringWithParen() + ")";
+      return "(" + operands_[0].ToStringWithParen() + func_ +
+             operands_[1].ToStringWithParen() + ")";
     }
   }
 
   void ToStream(std::ostream &out);
 
 private:
-  Expression<T> left_;
-  char operator_;
-  Expression<T> right_;
   std::string func_;
   std::vector<Expression<T>> operands_;
 };
