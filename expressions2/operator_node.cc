@@ -33,12 +33,6 @@ OperatorNode<T>::OperatorNode(
 }
 
 template <typename T>
-OperatorNode<T>::OperatorNode(const OperatorNode<T> &from)
-    : left_(from.left_),
-      operator_(from.operator_),
-      right_(from.right_) {}
-
-template <typename T>
 void OperatorNode<T>::PrintAsTree(int indent) {
   std::cout << std::string(indent, kSeparator) << operator_ << std::endl;
   left_.PrintAsTree(indent + 1);
