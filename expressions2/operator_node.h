@@ -33,8 +33,8 @@ public:
     } else {
       in >> op_;
     }
-    left_ = std::move(Expression<T>(in));
-    right_ = std::move(Expression<T>(in));
+    operands_.emplace_back(in);
+    operands_.emplace_back(in);
   }
 
   OperatorNode(Expression<T> &&left, char op, Expression<T> &&right);
@@ -47,8 +47,8 @@ public:
   [[nodiscard]] T EvalFunc() const;
 
   [[nodiscard]] inline T Eval() const {
-    T left = left_.Eval();
-    T right = right_.Eval();
+    T left = operands_[0].Eval();
+    T right = operands_[1].Eval();
     switch (op_[0]) {
       case '+':
         return left + right;
@@ -60,8 +60,6 @@ public:
         return left / right;
       case '^':
         return std::pow(left, right);
-      case '?':
-        return operands_[0].Eval() ? left : right;
       default:
         return EvalFunc();
     }
@@ -76,18 +74,17 @@ public:
       return FuncToStringWithParen();
     } else if (op_[0] == '?') {
       return "(" + operands_[0].ToStringWithParen() + "?" +
-             left_.ToStringWithParen() + ":" + right_.ToStringWithParen() + ")";
+             operands_[1].ToStringWithParen() + ":" +
+             operands_[2].ToStringWithParen() + ")";
     } else {
-      return "(" + left_.ToStringWithParen() + op_[0] +
-             right_.ToStringWithParen() + ")";
+      return "(" + operands_[0].ToStringWithParen() + op_[0] +
+             operands_[1].ToStringWithParen() + ")";
     }
   }
 
   void ToStream(std::ostream &out);
 
 private:
-  Expression<T> left_;
-  Expression<T> right_;
   std::string op_;
   std::vector<Expression<T>> operands_;
 };
