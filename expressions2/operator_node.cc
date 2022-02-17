@@ -25,7 +25,7 @@ OperatorNode<T>::OperatorNode(
 template <typename T>
 OperatorNode<T>::OperatorNode(
     char op,
-    Expression<T> &&ternary,  // NOLINT
+    Expression<T> &&ternary,
     Expression<T> &&left,
     Expression<T> &&right)
     : op_(1, op) {
@@ -70,6 +70,20 @@ template <typename T>
   }
   out.append(")");
   return out;
+}
+
+template <typename T>
+[[nodiscard]] inline std::string OperatorNode<T>::ToStringWithParen() {
+  if (op_.size() > 1) {
+    return FuncToStringWithParen();
+  } else if (op_[0] == '?') {  // NOLINT(readability-else-after-return)
+    return "(" + operands_[0].ToStringWithParen() + "?" +
+           operands_[1].ToStringWithParen() + ":" +
+           operands_[2].ToStringWithParen() + ")";
+  } else {
+    return "(" + operands_[0].ToStringWithParen() + op_[0] +
+           operands_[1].ToStringWithParen() + ")";
+  }
 }
 
 template <typename T>
