@@ -101,7 +101,7 @@ double Expression<double>::GetSimplifiedVal(const std::string& expr) const {
 }
 
 template <typename T>
-void Expression<T>::PrintAsTree(int indent) {
+void Expression<T>::PrintAsTree(int indent) const {
   if (operator_node_cache_ != nullptr) {
     operator_node_cache_->PrintAsTree(indent);
   } else {
@@ -111,7 +111,7 @@ void Expression<T>::PrintAsTree(int indent) {
 }
 
 template <typename T>
-void Expression<T>::ToStream(std::ostream& out) {
+void Expression<T>::ToStream(std::ostream& out) const {
   if (operator_node_cache_ != nullptr) {
     operator_node_cache_->ToStream(out);
   } else {

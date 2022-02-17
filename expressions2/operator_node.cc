@@ -35,7 +35,7 @@ OperatorNode<T>::OperatorNode(
 }
 
 template <typename T>
-void OperatorNode<T>::PrintAsTree(int indent) {
+void OperatorNode<T>::PrintAsTree(int indent) const {
   std::cout << std::string(indent, kSeparator) << op_[0] << std::endl;
   operands_[0].PrintAsTree(indent + 1);
   operands_[1].PrintAsTree(indent + 1);
@@ -61,7 +61,7 @@ template <typename T>
 }
 
 template <typename T>
-[[nodiscard]] std::string OperatorNode<T>::FuncToStringWithParen() {
+[[nodiscard]] std::string OperatorNode<T>::FuncToStringWithParen() const {
   std::string out = op_ + "(";
   // TODO(ashish): add consts
   for (int i = 0; i < operands_.size(); i++) {
@@ -73,7 +73,7 @@ template <typename T>
 }
 
 template <typename T>
-[[nodiscard]] inline std::string OperatorNode<T>::ToStringWithParen() {
+[[nodiscard]] inline std::string OperatorNode<T>::ToStringWithParen() const {
   if (op_.size() > 1) {
     return FuncToStringWithParen();
   } else if (op_[0] == '?') {  // NOLINT(readability-else-after-return)
@@ -87,12 +87,12 @@ template <typename T>
 }
 
 template <typename T>
-void OperatorNode<T>::ToStream(std::ostream &out) {
+void OperatorNode<T>::ToStream(std::ostream &out) const {
   if (op_.size() > 1) {
     out << kFxOperatorStr << kSeparator;
     out << op_;
     out << operands_.size();
-    for (auto &operand : operands_) {
+    for (const auto &operand : operands_) {
       operand.ToStream(out);
     }
     return;

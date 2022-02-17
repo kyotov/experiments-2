@@ -60,14 +60,14 @@ public:
     }
   }
 
-  void PrintAsTree(int indent);
+  void PrintAsTree(int indent) const;
 
-  [[nodiscard]] std::string ToStringWithParen();
-  void ToStream(std::ostream &out);
+  [[nodiscard]] std::string ToStringWithParen() const;
+  void ToStream(std::ostream &out) const;
 
 private:
   [[nodiscard]] T EvalFunc() const;
-  [[nodiscard]] std::string FuncToStringWithParen();
+  [[nodiscard]] std::string FuncToStringWithParen() const;
 
   std::string op_;
   std::vector<Expression<T>> operands_;
