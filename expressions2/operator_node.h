@@ -67,7 +67,7 @@ public:
 
 private:
   [[nodiscard]] T EvalFunc() const;
-  [[nodiscard]] std::string FuncToStringWithParen() const;
+  [[nodiscard]] std::string ToStringWithParenFunc() const;
 
   std::string op_;
   std::vector<Expression<T>> operands_;
