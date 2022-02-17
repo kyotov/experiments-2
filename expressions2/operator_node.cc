@@ -7,18 +7,20 @@ OperatorNode<T>::OperatorNode(
     const std::string &left,
     char op,
     const std::string &right)
-    : left_(left),
-      op_(1, op),
-      right_(right) {}
+    : op_(1, op) {
+  operands_.emplace_back(left);
+  operands_.emplace_back(right);
+}
 
 template <typename T>
 OperatorNode<T>::OperatorNode(
     Expression<T> &&left,
     char op,
     Expression<T> &&right)
-    : left_(std::move(left)),
-      op_(1, op),
-      right_(std::move(right)) {}
+    : op_(1, op) {
+  operands_.emplace_back(std::move(left));
+  operands_.emplace_back(std::move(right));
+}
 
 template <typename T>
 OperatorNode<T>::OperatorNode(
@@ -26,17 +28,17 @@ OperatorNode<T>::OperatorNode(
     Expression<T> &&ternary,  // NOLINT
     Expression<T> &&left,
     Expression<T> &&right)
-    : op_(1, op),
-      left_(std::move(left)),
-      right_(std::move(right)) {
+    : op_(1, op) {
   operands_.emplace_back(std::move(ternary));
+  operands_.emplace_back(std::move(left));
+  operands_.emplace_back(std::move(right));
 }
 
 template <typename T>
 void OperatorNode<T>::PrintAsTree(int indent) {
   std::cout << std::string(indent, kSeparator) << op_[0] << std::endl;
-  left_.PrintAsTree(indent + 1);
-  right_.PrintAsTree(indent + 1);
+  operands_[0].PrintAsTree(indent + 1);
+  operands_[1].PrintAsTree(indent + 1);
 }
 
 template <typename T>
@@ -47,7 +49,9 @@ template <typename T>
   for (auto &operand : operands_) {
     vals.emplace_back(operand.Eval());
   }
-  if (op_ == "min") {
+  if (op_[0] == '?') {
+    return vals[0] ? vals[1] : vals[2];
+  } else if (op_ == "min") {  // NOLINT(readability-else-after-return)
     return *std::min_element(vals.begin(), vals.end());
   } else if (op_ == "max") {  // NOLINT(readability-else-after-return)
     return *std::max_element(vals.begin(), vals.end());
@@ -81,12 +85,12 @@ void OperatorNode<T>::ToStream(std::ostream &out) {
   }
   if (op_[0] == '?') {
     out << kTOperatorStr << kSeparator;
-    operands_[0].ToStream(out);
   } else {
     out << kBOperatorStr << kSeparator << op_[0] << kSeparator;
   }
-  left_.ToStream(out);
-  right_.ToStream(out);
+  for (auto &operand : operands_) {
+    operand.ToStream(out);
+  }
 }
 
 template class OperatorNode<int>;
