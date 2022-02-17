@@ -18,13 +18,12 @@ template <typename T>
 class OperatorNode {
 public:
   OperatorNode(const std::string &left, char op, const std::string &right);
-  inline OperatorNode(std::istream &in, const std::string &specifier)
-      : operator_('@') {
+  inline OperatorNode(std::istream &in, const std::string &specifier) {
     if (specifier == kTOperatorStr) {
       operands_.emplace_back((in));
-      operator_ = '?';
+      op_ = "?";
     } else if (specifier == kFxOperatorStr) {
-      in >> func_;
+      in >> op_;
       int size;
       in >> size;
       for (int i = 0; i < size; i++) {
@@ -32,7 +31,7 @@ public:
       }
       return;
     } else {
-      in >> operator_;
+      in >> op_;
     }
     left_ = std::move(Expression<T>(in));
     right_ = std::move(Expression<T>(in));
@@ -44,18 +43,13 @@ public:
       Expression<T> &&ternary,
       Expression<T> &&left,
       Expression<T> &&right);
-  OperatorNode(const OperatorNode<T> &from) = delete;
-  OperatorNode(OperatorNode<T> &&from) noexcept = delete;
-  ~OperatorNode() = default;
-  OperatorNode<T> &operator=(OperatorNode<T> &from) = delete;
-  OperatorNode<T> &operator=(OperatorNode<T> &&from) noexcept = delete;
 
   [[nodiscard]] T EvalFunc() const;
 
   [[nodiscard]] inline T Eval() const {
     T left = left_.Eval();
     T right = right_.Eval();
-    switch (operator_) {
+    switch (op_[0]) {
       case '+':
         return left + right;
       case '-':
@@ -68,30 +62,23 @@ public:
         return std::pow(left, right);
       case '?':
         return operands_[0].Eval() ? left : right;
-      case '@':
-        return EvalFunc();
       default:
-        LOG_ASSERT(false) << "Unexpected operator: " << operator_;
+        return EvalFunc();
     }
   }
 
   void PrintAsTree(int indent);
 
+  [[nodiscard]] std::string FuncToStringWithParen();
+
   [[nodiscard]] inline std::string ToStringWithParen() {
-    if (operator_ == '?') {
+    if (op_.size() > 1) {
+      return FuncToStringWithParen();
+    } else if (op_[0] == '?') {
       return "(" + operands_[0].ToStringWithParen() + "?" +
              left_.ToStringWithParen() + ":" + right_.ToStringWithParen() + ")";
-    } else if (operator_ == '@') {
-      std::string out = func_ + "(";
-      // TODO(ashish): add consts
-      for (int i = 0; i < operands_.size(); i++) {
-        out.append(i == 0 ? "" : ",");
-        out.append(operands_[i].ToStringWithParen());
-      }
-      out.append(")");
-      return out;
     } else {
-      return "(" + left_.ToStringWithParen() + operator_ +
+      return "(" + left_.ToStringWithParen() + op_[0] +
              right_.ToStringWithParen() + ")";
     }
   }
@@ -100,9 +87,8 @@ public:
 
 private:
   Expression<T> left_;
-  char operator_;
   Expression<T> right_;
-  std::string func_;
+  std::string op_;
   std::vector<Expression<T>> operands_;
 };
 
