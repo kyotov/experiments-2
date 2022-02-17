@@ -49,15 +49,15 @@ public:
                                              : simplified_value_;
   }
 
-  void PrintAsTree(int indent);
+  void PrintAsTree(int indent) const;
 
-  inline std::string ToStringWithParen() {
+  inline std::string ToStringWithParen() const {
     return (operator_node_cache_ != nullptr)
                ? operator_node_cache_->ToStringWithParen()
                : "(" + std::to_string(simplified_value_) + ")";
   }
 
-  void ToStream(std::ostream& out);
+  void ToStream(std::ostream& out) const;
 
 private:
   [[nodiscard]] int GetOperatorIndex(const std::string& expr) const;
