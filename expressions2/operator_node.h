@@ -19,22 +19,19 @@ class OperatorNode {
 public:
   OperatorNode(const std::string &left, char op, const std::string &right);
   inline OperatorNode(std::istream &in, const std::string &specifier) {
+    int num_operands = 2;
     if (specifier == kTOperatorStr) {
-      operands_.emplace_back((in));
       op_ = "?";
+      num_operands = 3;
     } else if (specifier == kFxOperatorStr) {
       in >> op_;
-      int size;
-      in >> size;
-      for (int i = 0; i < size; i++) {
-        operands_.emplace_back(in);
-      }
-      return;
+      in >> num_operands;
     } else {
       in >> op_;
     }
-    operands_.emplace_back(in);
-    operands_.emplace_back(in);
+    for (int i = 0; i < num_operands; i++) {
+      operands_.emplace_back(in);
+    }
   }
 
   OperatorNode(Expression<T> &&left, char op, Expression<T> &&right);
@@ -43,8 +40,6 @@ public:
       Expression<T> &&ternary,
       Expression<T> &&left,
       Expression<T> &&right);
-
-  [[nodiscard]] T EvalFunc() const;
 
   [[nodiscard]] inline T Eval() const {
     T left = operands_[0].Eval();
@@ -67,24 +62,13 @@ public:
 
   void PrintAsTree(int indent);
 
-  [[nodiscard]] std::string FuncToStringWithParen();
-
-  [[nodiscard]] inline std::string ToStringWithParen() {
-    if (op_.size() > 1) {
-      return FuncToStringWithParen();
-    } else if (op_[0] == '?') {
-      return "(" + operands_[0].ToStringWithParen() + "?" +
-             operands_[1].ToStringWithParen() + ":" +
-             operands_[2].ToStringWithParen() + ")";
-    } else {
-      return "(" + operands_[0].ToStringWithParen() + op_[0] +
-             operands_[1].ToStringWithParen() + ")";
-    }
-  }
-
+  [[nodiscard]] std::string ToStringWithParen();
   void ToStream(std::ostream &out);
 
 private:
+  [[nodiscard]] T EvalFunc() const;
+  [[nodiscard]] std::string FuncToStringWithParen();
+
   std::string op_;
   std::vector<Expression<T>> operands_;
 };
