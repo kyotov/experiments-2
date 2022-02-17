@@ -56,7 +56,7 @@ public:
       case '^':
         return std::pow(left, right);
       default:
-        return EvalFunc();
+        return EvalAux();
     }
   }
 
@@ -66,8 +66,8 @@ public:
   void ToStream(std::ostream &out) const;
 
 private:
-  [[nodiscard]] T EvalFunc() const;
-  [[nodiscard]] std::string ToStringWithParenFunc() const;
+  [[nodiscard]] T EvalAux() const;
+  [[nodiscard]] std::string ToStringWithParenAux() const;
 
   std::string op_;
   std::vector<Expression<T>> operands_;
