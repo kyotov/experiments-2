@@ -58,6 +58,15 @@ template <typename T>
 
 template <typename T>
 void OperatorNode<T>::ToStream(std::ostream &out) {
+  if (operator_ == '@') {
+    out << kFxOperatorStr << kSeparator;
+    out << func_;
+    out << operands_.size();
+    for (auto &operand : operands_) {
+      operand.ToStream(out);
+    }
+    return;
+  }
   if (operator_ == '?') {
     out << kTOperatorStr << kSeparator;
     operands_[0].ToStream(out);
