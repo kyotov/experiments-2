@@ -51,29 +51,16 @@ public:
   OperatorNode<T> &operator=(OperatorNode<T> &&from) noexcept = delete;
 
   [[nodiscard]] T EvalFunc() const {
-    // auto comparison = [](const Expression<T> &e1, const Expression<T> &e2) {
-    //   return e1.Eval() < e2.Eval();
-    // };
+    // NOTE: Below storage can be removed in favor of a lambda that does Eval()
+    // during comparison likely at the cost of at least one extra Eval.
+    std::vector<T> vals;
+    for (auto &operand : operands_) {
+      vals.emplace_back(operand.Eval());
+    }
     if (func_ == "min") {
-      T min = std::numeric_limits<int>::max();
-      for (const auto &operand : operands_) {
-        T val = operand.Eval();
-        if (val < min) {
-          min = val;
-        }
-      }
-      return min;
-      // return std::min(operands_, comparison);
+      return *std::min_element(vals.begin(), vals.end());
     } else if (func_ == "max") {
-      T max = std::numeric_limits<int>::min();
-      for (const auto &operand : operands_) {
-        T val = operand.Eval();
-        if (val > max) {
-          max = val;
-        }
-      }
-      return max;
-      // return std::max(operands_, comparison);
+      return *std::max_element(vals.begin(), vals.end());
     } else {
       CHECK(false) << "Unexpected function: " << func_;
     }
