@@ -42,7 +42,7 @@ void OperatorNode<T>::PrintAsTree(int indent) const {
 }
 
 template <typename T>
-[[nodiscard]] T OperatorNode<T>::EvalFunc() const {
+[[nodiscard]] T OperatorNode<T>::EvalAux() const {
   // NOTE: Below storage can be removed in favor of a lambda that does Eval()
   // during comparison likely at the cost of at least one extra Eval.
   std::vector<T> vals;
@@ -61,7 +61,7 @@ template <typename T>
 }
 
 template <typename T>
-[[nodiscard]] std::string OperatorNode<T>::ToStringWithParenFunc() const {
+[[nodiscard]] std::string OperatorNode<T>::ToStringWithParenAux() const {
   std::string out = op_ + "(";
   for (int i = 0; i < operands_.size(); i++) {
     out.append(i == 0 ? "" : ",");
@@ -74,7 +74,7 @@ template <typename T>
 template <typename T>
 [[nodiscard]] inline std::string OperatorNode<T>::ToStringWithParen() const {
   if (op_.size() > 1) {
-    return ToStringWithParenFunc();
+    return ToStringWithParenAux();
   } else if (op_[0] == '?') {  // NOLINT(readability-else-after-return)
     return "(" + operands_[0].ToStringWithParen() + "?" +
            operands_[1].ToStringWithParen() + ":" +
