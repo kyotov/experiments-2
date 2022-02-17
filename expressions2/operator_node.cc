@@ -61,9 +61,8 @@ template <typename T>
 }
 
 template <typename T>
-[[nodiscard]] std::string OperatorNode<T>::FuncToStringWithParen() const {
+[[nodiscard]] std::string OperatorNode<T>::ToStringWithParenFunc() const {
   std::string out = op_ + "(";
-  // TODO(ashish): add consts
   for (int i = 0; i < operands_.size(); i++) {
     out.append(i == 0 ? "" : ",");
     out.append(operands_[i].ToStringWithParen());
@@ -75,7 +74,7 @@ template <typename T>
 template <typename T>
 [[nodiscard]] inline std::string OperatorNode<T>::ToStringWithParen() const {
   if (op_.size() > 1) {
-    return FuncToStringWithParen();
+    return ToStringWithParenFunc();
   } else if (op_[0] == '?') {  // NOLINT(readability-else-after-return)
     return "(" + operands_[0].ToStringWithParen() + "?" +
            operands_[1].ToStringWithParen() + ":" +
@@ -92,12 +91,7 @@ void OperatorNode<T>::ToStream(std::ostream &out) const {
     out << kFxOperatorStr << kSeparator;
     out << op_;
     out << operands_.size();
-    for (const auto &operand : operands_) {
-      operand.ToStream(out);
-    }
-    return;
-  }
-  if (op_[0] == '?') {
+  } else if (op_[0] == '?') {
     out << kTOperatorStr << kSeparator;
   } else {
     out << kBOperatorStr << kSeparator << op_[0] << kSeparator;
