@@ -40,6 +40,23 @@ void OperatorNode<T>::PrintAsTree(int indent) {
 }
 
 template <typename T>
+[[nodiscard]] T OperatorNode<T>::EvalFunc() const {
+  // NOTE: Below storage can be removed in favor of a lambda that does Eval()
+  // during comparison likely at the cost of at least one extra Eval.
+  std::vector<T> vals;
+  for (auto &operand : operands_) {
+    vals.emplace_back(operand.Eval());
+  }
+  if (func_ == "min") {
+    return *std::min_element(vals.begin(), vals.end());
+  } else if (func_ == "max") {  // NOLINT(readability-else-after-return)
+    return *std::max_element(vals.begin(), vals.end());
+  } else {  // NOLINT(readability-else-after-return)
+    CHECK(false) << "Unexpected function: " << func_;
+  }
+}
+
+template <typename T>
 void OperatorNode<T>::ToStream(std::ostream &out) {
   if (operator_ == '?') {
     out << kTOperatorStr << kSeparator;
