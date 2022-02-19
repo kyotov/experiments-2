@@ -16,7 +16,7 @@ template <typename T>
 class Expression {
 public:
   explicit Expression(const std::string& expr);
-  explicit inline Expression(std::istream& in)
+  explicit Expression(std::istream& in)
       : simplified_value_(-1),
         operator_node_cache_(nullptr) {
     std::string specifier;
@@ -44,14 +44,14 @@ public:
   ~Expression() = default;
   Expression<T>& operator=(Expression<T>& from) = delete;
 
-  [[nodiscard]] inline T Eval() const {
+  [[nodiscard]] T Eval() const {
     return (operator_node_cache_ != nullptr) ? operator_node_cache_->Eval()
                                              : simplified_value_;
   }
 
   void PrintAsTree(int indent) const;
 
-  inline std::string ToStringWithParen() const {
+  std::string ToStringWithParen() const {
     return (operator_node_cache_ != nullptr)
                ? operator_node_cache_->ToStringWithParen()
                : "(" + std::to_string(simplified_value_) + ")";

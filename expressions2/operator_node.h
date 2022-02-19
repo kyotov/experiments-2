@@ -18,7 +18,7 @@ template <typename T>
 class OperatorNode {
 public:
   OperatorNode(const std::string &left, char op, const std::string &right);
-  inline OperatorNode(std::istream &in, const std::string &specifier) {
+  OperatorNode(std::istream &in, const std::string &specifier) {
     int num_operands = 2;
     if (specifier == kTOperatorStr) {
       op_ = "?";
@@ -41,7 +41,7 @@ public:
       Expression<T> &&left,
       Expression<T> &&right);
 
-  [[nodiscard]] inline T Eval() const {
+  [[nodiscard]] T Eval() const {
     T left = operands_[0].Eval();
     T right = operands_[1].Eval();
     switch (op_[0]) {
