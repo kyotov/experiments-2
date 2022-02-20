@@ -5,6 +5,7 @@
 #include <memory>
 #include <string>
 
+#include "bin_operator_node.h"
 #include "operator_node.h"
 
 namespace code_experiments {
@@ -13,11 +14,15 @@ template <typename T>
 class OperatorNode;
 
 template <typename T>
+class BinOperatorNode;
+
+template <typename T>
 class Expression {
 public:
   explicit Expression(const std::string& expr);
   explicit Expression(std::istream& in)
       : simplified_value_(-1),
+        bin_operator_node_cache_(nullptr),
         operator_node_cache_(nullptr) {
     std::string specifier;
     in >> specifier;
@@ -25,6 +30,8 @@ public:
       std::string expr;
       in >> expr;
       simplified_value_ = GetSimplifiedVal(expr);
+    } else if (specifier == kBOperatorStr) {
+      bin_operator_node_cache_ = std::make_unique<BinOperatorNode<T>>(in);
     } else {
       operator_node_cache_ = std::make_unique<OperatorNode<T>>(in, specifier);
     }
@@ -45,16 +52,21 @@ public:
   Expression<T>& operator=(Expression<T>& from) = delete;
 
   [[nodiscard]] T Eval() const {
-    return (operator_node_cache_ != nullptr) ? operator_node_cache_->Eval()
-                                             : simplified_value_;
+    return (bin_operator_node_cache_ != nullptr)
+               ? bin_operator_node_cache_->Eval()
+               : ((operator_node_cache_ == nullptr)
+                      ? simplified_value_
+                      : operator_node_cache_->Eval());
   }
 
   void PrintAsTree(int indent) const;
 
   std::string ToStringWithParen() const {
-    return (operator_node_cache_ != nullptr)
-               ? operator_node_cache_->ToStringWithParen()
-               : "(" + std::to_string(simplified_value_) + ")";
+    return (bin_operator_node_cache_ != nullptr)
+               ? bin_operator_node_cache_->ToStringWithParen()
+               : ((operator_node_cache_ != nullptr)
+                      ? operator_node_cache_->ToStringWithParen()
+                      : "(" + std::to_string(simplified_value_) + ")");
   }
 
   void ToStream(std::ostream& out) const;
@@ -66,6 +78,7 @@ private:
 
   T simplified_value_;
   std::unique_ptr<OperatorNode<T>> operator_node_cache_;
+  std::unique_ptr<BinOperatorNode<T>> bin_operator_node_cache_;
 };
 
 }  // namespace code_experiments

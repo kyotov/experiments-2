@@ -15,7 +15,7 @@ class ExpressionsTests : public ::testing::Test {};
 TEST_F(ExpressionsTests, BasicOperatorCheck) {  // NOLINT
   std::string left("1");
   std::string right("2");
-  OperatorNode<int> node(left, '+', right);
+  BinOperatorNode<int> node(left, '+', right);
   EXPECT_EQ(node.Eval(), 3);
 }
 

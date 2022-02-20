@@ -17,7 +17,6 @@ class Expression;
 template <typename T>
 class OperatorNode {
 public:
-  OperatorNode(const std::string &left, char op, const std::string &right);
   OperatorNode(std::istream &in, const std::string &specifier) {
     int num_operands = 2;
     if (specifier == kTOperatorStr) {
@@ -29,6 +28,7 @@ public:
     } else {
       in >> op_;
     }
+    CHECK(num_operands != 2) << "Specialized bin operator not used";
     for (int i = 0; i < num_operands; i++) {
       operands_.emplace_back(in);
     }

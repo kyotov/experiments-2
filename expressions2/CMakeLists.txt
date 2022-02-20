@@ -1,4 +1,8 @@
-add_library(expressions2 utils.cc operator_node.cc expression.cc)
+add_library(expressions2 
+    utils.cc 
+    operator_node.cc 
+    expression.cc 
+    bin_operator_node.cc)
 target_link_libraries(expressions2
     PRIVATE cast_utils
     PRIVATE glog::glog)

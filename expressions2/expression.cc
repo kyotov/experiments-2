@@ -10,6 +10,7 @@ namespace code_experiments {
 template <typename T>
 Expression<T>::Expression(const std::string& expr)
     : simplified_value_(-1),
+      bin_operator_node_cache_(nullptr),
       operator_node_cache_(nullptr) {
   Parse(expr);
 }
@@ -18,26 +19,30 @@ template <typename T>
 Expression<T>& Expression<T>::operator=(Expression<T>&& from) noexcept {
   simplified_value_ = from.simplified_value_;
   operator_node_cache_ = std::move(from.operator_node_cache_);
+  bin_operator_node_cache_ = std::move(from.bin_operator_node_cache_);
   return *this;
 }
 
 template <typename T>
 Expression<T>::Expression(Expression<T>&& from) noexcept
     : simplified_value_(from.simplified_value_),
+      bin_operator_node_cache_(std::move(from.bin_operator_node_cache_)),
       operator_node_cache_(std::move(from.operator_node_cache_)) {}
 
 template <typename T>
 Expression<T>::Expression(T constant)
     : simplified_value_(constant),
+      bin_operator_node_cache_(nullptr),
       operator_node_cache_(nullptr) {}
 
 template <typename T>
 Expression<T>::Expression(Expression<T>&& left, char op, Expression<T>&& right)
     : simplified_value_(-1),
-      operator_node_cache_(std::make_unique<OperatorNode<T>>(
+      bin_operator_node_cache_(std::make_unique<BinOperatorNode<T>>(
           std::move(left),
           op,
-          std::move(right))) {}
+          std::move(right))),
+      operator_node_cache_(nullptr) {}
 
 template <typename T>
 Expression<T>::Expression(
@@ -46,6 +51,7 @@ Expression<T>::Expression(
     Expression<T>&& left,
     Expression<T>&& right)
     : simplified_value_(-1),
+      bin_operator_node_cache_(nullptr),
       operator_node_cache_(std::make_unique<OperatorNode<T>>(
           op,
           std::move(ternary),
@@ -57,6 +63,7 @@ Expression<T>::Expression(
 template <typename T>
 Expression<T>::Expression()
     : simplified_value_(-1),
+      bin_operator_node_cache_(nullptr),
       operator_node_cache_(nullptr) {}
 
 template <typename T>
@@ -81,7 +88,7 @@ template <typename T>
 void Expression<T>::Parse(const std::string& expr) {
   int op_index = GetOperatorIndex(expr);
   if (op_index != -1) {
-    operator_node_cache_ = std::make_unique<OperatorNode<T>>(
+    bin_operator_node_cache_ = std::make_unique<BinOperatorNode<T>>(
         expr.substr(0, op_index),
         expr[op_index],
         expr.substr(op_index + 1));
@@ -112,10 +119,12 @@ void Expression<T>::PrintAsTree(int indent) const {
 
 template <typename T>
 void Expression<T>::ToStream(std::ostream& out) const {
-  if (operator_node_cache_ != nullptr) {
-    operator_node_cache_->ToStream(out);
-  } else {
+  if (bin_operator_node_cache_ != nullptr) {
+    bin_operator_node_cache_->ToStream(out);
+  } else if (operator_node_cache_ == nullptr) {
     out << kConstantStr << " " << simplified_value_ << kSeparator;
+  } else {
+    operator_node_cache_->ToStream(out);
   }
 }
 

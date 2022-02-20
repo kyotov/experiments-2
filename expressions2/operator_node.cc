@@ -4,16 +4,6 @@ namespace code_experiments {
 
 template <typename T>
 OperatorNode<T>::OperatorNode(
-    const std::string &left,
-    char op,
-    const std::string &right)
-    : op_(1, op) {
-  operands_.emplace_back(left);
-  operands_.emplace_back(right);
-}
-
-template <typename T>
-OperatorNode<T>::OperatorNode(
     Expression<T> &&left,
     char op,
     Expression<T> &&right)
@@ -72,7 +62,7 @@ template <typename T>
 }
 
 template <typename T>
-[[nodiscard]] inline std::string OperatorNode<T>::ToStringWithParen() const {
+[[nodiscard]] std::string OperatorNode<T>::ToStringWithParen() const {
   if (op_.size() > 1) {
     return ToStringWithParenAux();
   } else if (op_[0] == '?') {  // NOLINT(readability-else-after-return)
