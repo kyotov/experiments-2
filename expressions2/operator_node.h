@@ -66,29 +66,7 @@ public:
   void ToStream(std::ostream &out) const;
 
 private:
-  [[nodiscard]] inline T EvalAux() const {
-    if (op_[0] == '?') {
-      return operands_[0].Eval() ? operands_[1].Eval() : operands_[2].Eval();
-    }
-    if (op_ == "min") {
-      int result = operands_[0].Eval();
-      for (int i = 1; i < operands_.size(); i++) {
-        auto next = operands_[i].Eval();
-        result = next < result ? next : result;
-      }
-      return result;
-    }
-    if (op_ == "max") {
-      int result = operands_[0].Eval();
-      for (int i = 1; i < operands_.size(); i++) {
-        auto next = operands_[i].Eval();
-        result = next > result ? next : result;
-      }
-      return result;
-    }
-    CHECK(false) << "Unexpected function " << op_;
-  }
-
+  [[nodiscard]] T EvalAux() const;
   [[nodiscard]] std::string ToStringWithParenAux() const;
 
   std::string op_;

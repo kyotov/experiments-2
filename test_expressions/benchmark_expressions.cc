@@ -143,6 +143,17 @@ static void Test6_ComputeBOp(benchmark::State& state) {
   for (auto _ : state) D::Compute(ee);
 }
 
+template <typename D>
+static void Test6_ComputeFx(benchmark::State& state) {
+  const int num_operands = 2'000'000;
+  std::string s = "Fx min " + std::to_string(num_operands) + " ";
+  for (int i = 0; i < num_operands; i++) {
+    s += "C 1 ";
+  }
+  typename D::Expr e = LoadFromString<D>(s);
+  for (auto _ : state) D::Compute(e);
+}
+
 // BENCHMARK(Test0_construct1<AtExpressionsDriver>);
 // BENCHMARK(Test0_construct1<KyExpressionsDriver>);
 // BENCHMARK(Test0_construct1<KyExpressionsDriverDD>);
@@ -182,5 +193,9 @@ BENCHMARK(Test5_AsString<KyExpressionsDriverDD>);
 BENCHMARK(Test6_ComputeBOp<AtExpressionsDriver>);
 BENCHMARK(Test6_ComputeBOp<KyExpressionsDriver>);
 BENCHMARK(Test6_ComputeBOp<KyExpressionsDriverDD>);
+
+BENCHMARK(Test6_ComputeFx<AtExpressionsDriver>);
+BENCHMARK(Test6_ComputeFx<KyExpressionsDriver>);
+BENCHMARK(Test6_ComputeFx<KyExpressionsDriverDD>);
 
 BENCHMARK_MAIN();
