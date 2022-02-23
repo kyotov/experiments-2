@@ -1,7 +1,7 @@
 #include <benchmark/benchmark.h>
 
-#include <iostream>
 #include <chrono>
+#include <iostream>
 
 #include "expressions.h"
 
@@ -26,7 +26,7 @@ static void Test4_2(benchmark::State& state) {
   }
 }
 
-static const std::string &construct1() {
+static const std::string& construct1() {
   static bool constructed = false;
   static std::string s;
   if (!constructed) {
@@ -40,12 +40,12 @@ static const std::string &construct1() {
 }
 
 template <typename D>
-static typename D::Expr &construct2() {
+static typename D::Expr& construct2() {
   static bool constructed = false;
   static typename D::Expr e;
   if (!constructed) {
     constructed = true;
-    const auto &s = construct1();
+    const auto& s = construct1();
     e = LoadFromString<D>(s);
   }
   return e;
@@ -54,14 +54,14 @@ static typename D::Expr &construct2() {
 template <typename D>
 static void Test0_construct1(benchmark::State& state) {
   for (auto _ : state) {
-    const auto &e = construct1();
+    const auto& e = construct1();
   }
 }
 
 template <typename D>
 static void Test0_construct2(benchmark::State& state) {
   for (auto _ : state) {
-    const auto &e = construct2<D>();
+    const auto& e = construct2<D>();
   }
 }
 
@@ -79,34 +79,37 @@ static void Test5_LoadFromString(benchmark::State& state) {
 template <typename D>
 static void Test5_ComputeBOp(benchmark::State& state) {
   std::string s = "BOp + C 1 C 1 ";
-  for (int i = 0; i < 20; i++) {
-    s = "BOp + " + s + s;
+  for (int i = 0; i < 30; i++) {
+    s = "BOp + " + s + "C 1 ";
   }
   typename D::Expr e = LoadFromString<D>(s);
-  auto &ee = e;
+  auto& ee = e;
   for (auto _ : state) D::Compute(ee);
 }
 
 template <typename D>
 static void Test5a_ComputeBOp(benchmark::State& state) {
-  auto &ee = construct2<D>();
+  auto& ee = construct2<D>();
   uintmax_t nsec = 0;
   uintmax_t count = 0;
   constexpr int magic = 123456789;
   int c = magic;
   for (auto _ : state) {
-    std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
+    std::chrono::steady_clock::time_point begin =
+        std::chrono::steady_clock::now();
     int c2 = D::Compute(ee);
     if (c == magic) {
       c = c2;
     } else {
       CHECK(c == c2) << " mismatch!";
     }
-    std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
-    nsec += std::chrono::duration_cast<std::chrono::nanoseconds> (end - begin).count();
+    std::chrono::steady_clock::time_point end =
+        std::chrono::steady_clock::now();
+    nsec += std::chrono::duration_cast<std::chrono::nanoseconds>(end - begin)
+                .count();
     count++;
   }
-//   std::cout << 1.0 * nsec / count << " [ns] result=" << c << std::endl;
+  //   std::cout << 1.0 * nsec / count << " [ns] result=" << c << std::endl;
 }
 
 template <typename D>
@@ -148,21 +151,26 @@ static void Test5_AsString(benchmark::State& state) {
 BENCHMARK(Test5_LoadFromString<AtExpressionsDriver>);
 BENCHMARK(Test5_LoadFromString<KyExpressionsDriver>);
 BENCHMARK(Test5_LoadFromString<KyExpressionsDriverDD>);
+BENCHMARK(Test5_LoadFromString<AtExpressionsDriverSimple>);
 
 BENCHMARK(Test5_ComputeBOp<AtExpressionsDriver>);
 BENCHMARK(Test5_ComputeBOp<KyExpressionsDriver>);
 BENCHMARK(Test5_ComputeBOp<KyExpressionsDriverDD>);
+BENCHMARK(Test5_ComputeBOp<AtExpressionsDriverSimple>);
 
 BENCHMARK(Test5a_ComputeBOp<AtExpressionsDriver>);
 BENCHMARK(Test5a_ComputeBOp<KyExpressionsDriver>);
 BENCHMARK(Test5a_ComputeBOp<KyExpressionsDriverDD>);
+BENCHMARK(Test5a_ComputeBOp<AtExpressionsDriverSimple>);
 
 BENCHMARK(Test5_ComputeFx<AtExpressionsDriver>);
 BENCHMARK(Test5_ComputeFx<KyExpressionsDriver>);
 BENCHMARK(Test5_ComputeFx<KyExpressionsDriverDD>);
+BENCHMARK(Test5_ComputeFx<AtExpressionsDriverSimple>);
 
 BENCHMARK(Test5_AsString<AtExpressionsDriver>);
 BENCHMARK(Test5_AsString<KyExpressionsDriver>);
 BENCHMARK(Test5_AsString<KyExpressionsDriverDD>);
+BENCHMARK(Test5_AsString<AtExpressionsDriverSimple>);
 
 BENCHMARK_MAIN();

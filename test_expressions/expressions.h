@@ -4,6 +4,7 @@
 #include <sstream>
 
 #include "../expressions2/utils.h"
+#include "../expressions3/expressionu.h"
 #include "../ky_expressions/expressions.h"
 #include "../ky_expressions/expressions_dd.h"
 
@@ -27,6 +28,23 @@ public:
         std::move(c),
         std::move(t),
         std::move(f));
+  }
+};
+
+class AtExpressionsDriverSimple {
+public:
+  using Expr = code_experiments::ExpressionU;
+
+  static int Compute(Expr &e) { return e.Eval(); }
+  static std::string AsString(Expr &e) { return e.ToStringWithParen(); }
+  static void Save(Expr &e, std::ostream &s) { e.ToStream(s); }
+  static Expr Load(std::istream &s) { return Expr(s); }
+  static Expr ConstantExpression(int value) { return Expr(value); }
+  static Expr BinaryOperatorExpression(char op, Expr l, Expr r) {
+    return Expr(std::move(l), op, std::move(r));
+  }
+  static Expr TernaryOperatorExpression(Expr c, Expr t, Expr f) {
+    return Expr('?', std::move(c), std::move(t), std::move(f));
   }
 };
 
