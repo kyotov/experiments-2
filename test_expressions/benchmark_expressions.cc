@@ -40,7 +40,7 @@ static const std::string &construct1() {
 }
 
 template <typename D>
-static D::Expr &construct2() {
+static typename D::Expr &construct2() {
   static bool constructed = false;
   static typename D::Expr e;
   if (!constructed) {
@@ -106,7 +106,7 @@ static void Test5a_ComputeBOp(benchmark::State& state) {
     nsec += std::chrono::duration_cast<std::chrono::nanoseconds> (end - begin).count();
     count++;
   }
-  std::cout << 1.0 * nsec / count << " [ns] result=" << c << std::endl;
+//   std::cout << 1.0 * nsec / count << " [ns] result=" << c << std::endl;
 }
 
 template <typename D>
