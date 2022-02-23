@@ -70,17 +70,17 @@ __HINT__ std::unique_ptr<Expression> BinaryOperatorExpression::Load(std::istream
   char o;
   s >> o;
 
-  // return std::make_unique<BinaryOperatorExpression>(
-  //     o,
-  //     std::move(Expression::Load(s)),
-  //     std::move(Expression::Load(s)));
-
-  auto l =Expression::Load(s);
-  auto r =Expression::Load(s); 
   return std::make_unique<BinaryOperatorExpression>(
       o,
-      std::move(l),
-      std::move(r));
+      std::move(Expression::Load(s)),
+      std::move(Expression::Load(s)));
+
+  // auto l =Expression::Load(s);
+  // auto r =Expression::Load(s); 
+  // return std::make_unique<BinaryOperatorExpression>(
+  //     o,
+  //     std::move(l),
+  //     std::move(r));
 
   // auto l = Expression::Load(s);
   // return std::make_unique<BinaryOperatorExpression>(

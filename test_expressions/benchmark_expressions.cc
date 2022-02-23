@@ -1,6 +1,7 @@
 #include <benchmark/benchmark.h>
 
 #include <iostream>
+#include <chrono>
 
 #include "expressions.h"
 
@@ -39,7 +40,7 @@ static const std::string &construct1() {
 }
 
 template <typename D>
-static D::Expr &construct2() {
+static typename D::Expr &construct2() {
   static bool constructed = false;
   static typename D::Expr e;
   if (!constructed) {
@@ -89,7 +90,23 @@ static void Test5_ComputeBOp(benchmark::State& state) {
 template <typename D>
 static void Test5a_ComputeBOp(benchmark::State& state) {
   auto &ee = construct2<D>();
-  for (auto _ : state) D::Compute(ee);
+  uintmax_t nsec = 0;
+  uintmax_t count = 0;
+  constexpr int magic = 123456789;
+  int c = magic;
+  for (auto _ : state) {
+    std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
+    int c2 = D::Compute(ee);
+    if (c == magic) {
+      c = c2;
+    } else {
+      CHECK(c == c2) << " mismatch!";
+    }
+    std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
+    nsec += std::chrono::duration_cast<std::chrono::nanoseconds> (end - begin).count();
+    count++;
+  }
+//   std::cout << 1.0 * nsec / count << " [ns] result=" << c << std::endl;
 }
 
 template <typename D>
