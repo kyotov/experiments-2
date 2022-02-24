@@ -44,9 +44,12 @@ public:
   ~Expression() = default;
   Expression<T>& operator=(Expression<T>& from) = delete;
 
-  [[nodiscard]] T Eval() const {
-    return (operator_node_cache_ != nullptr) ? operator_node_cache_->Eval()
-                                             : simplified_value_;
+  [[nodiscard]] inline T Eval() const {
+    if (operator_node_cache_ != nullptr) [[unlikely]] {
+      return operator_node_cache_->Eval();
+    } else [[likely]] {  // NOLINT
+      return simplified_value_;
+    }
   }
 
   void PrintAsTree(int indent) const;

@@ -41,12 +41,11 @@ public:
       Expression<T> &&left,
       Expression<T> &&right);
 
-  [[nodiscard]] T Eval() const {
+  [[nodiscard]] inline T Eval() const {
     T left = operands_[0].Eval();
     T right = operands_[1].Eval();
     switch (op_[0]) {
-      case '+':
-        return left + right;
+      [[likely]] case '+' : return left + right;
       case '-':
         return left - right;
       case '*':
