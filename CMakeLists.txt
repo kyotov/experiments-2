@@ -37,22 +37,15 @@ if(CLANG_TIDY)
         "--export-fixes=${CMAKE_BINARY_DIR}/clang-tidy.fixes")
 endif()
 
-add_subdirectory(expressions)
 add_subdirectory(ky_expressions)
 add_subdirectory(test_expressions)
 
-add_subdirectory(iterators)
-add_subdirectory(code_checks)
-add_subdirectory(type_size_optimizations)
-add_subdirectory(multi_reader_async)
 add_subdirectory(cast_utils)
 add_subdirectory(expressions2)
-add_subdirectory(runtime_to_compiletime)
 
 add_executable(example main.cc)
 target_link_libraries(example
-    PRIVATE glog::glog
-    PRIVATE expressions)
+    PRIVATE glog::glog)
 
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
 set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})
