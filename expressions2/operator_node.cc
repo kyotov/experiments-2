@@ -43,21 +43,23 @@ void OperatorNode<T>::PrintAsTree(int indent) const {
 
 template <typename T>
 [[nodiscard]] T OperatorNode<T>::EvalAux() const {
-  // NOTE: Below storage can be removed in favor of a lambda that does Eval()
-  // during comparison likely at the cost of at least one extra Eval.
-  std::vector<T> vals;
-  for (auto &operand : operands_) {
-    vals.emplace_back(operand.Eval());
-  }
+  auto comparator = op_ == "min" ? [](int x, int y) { return x < y ? x : y; }
+                    : op_ == "max"
+                        ? [](int x, int y) { return x > y ? x : y; }
+                        : [](int x, int y) {  // NOLINT(misc-unused-parameters)
+                            CHECK(false) << "Invalid function call";
+                            return 0;
+                          };
+
   if (op_[0] == '?') {
-    return vals[0] ? vals[1] : vals[2];
-  } else if (op_ == "min") {  // NOLINT(readability-else-after-return)
-    return *std::min_element(vals.begin(), vals.end());
-  } else if (op_ == "max") {  // NOLINT(readability-else-after-return)
-    return *std::max_element(vals.begin(), vals.end());
-  } else {  // NOLINT(readability-else-after-return)
-    CHECK(false) << "Unexpected function: " << op_;
+    return operands_[0].Eval() ? operands_[1].Eval() : operands_[2].Eval();
   }
+  CHECK(!operands_.empty()) << op_ << " called with 0 operands";
+  int result = operands_[0].Eval();
+  for (int i = 1; i < operands_.size(); i++) {
+    result = comparator(result, operands_[i].Eval());
+  }
+  return result;
 }
 
 template <typename T>
