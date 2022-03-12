@@ -92,3 +92,4 @@ void RunTests() {
 TEST(Expressions, AtExpressions) { RunTests<AtExpressionsDriver>(); }
 TEST(Expressions, KyExpressions) { RunTests<KyExpressionsDriver>(); }
 TEST(Expressions, KyExpressionsDD) { RunTests<KyExpressionsDriverDD>(); }
+TEST(Expressions, CaExpressions) { RunTests<ca::CaExpressionsDriver>(); }

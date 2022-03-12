@@ -6,6 +6,7 @@ target_link_libraries(test_expressions
     GTest::gtest
     GTest::gtest_main
     ky_expressions
+	ca_expressions
     expressions2
 )
 gtest_discover_tests(test_expressions)
@@ -17,6 +18,7 @@ add_executable(benchmark_expressions
 target_link_libraries(benchmark_expressions
     glog::glog
     ky_expressions
+	ca_expressions
     expressions2
     benchmark::benchmark
 )

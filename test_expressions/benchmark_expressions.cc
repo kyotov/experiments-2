@@ -173,29 +173,36 @@ static void Test6_ComputeFx(benchmark::State& state) {
 BENCHMARK(Test5_LoadFromString<AtExpressionsDriver>);
 BENCHMARK(Test5_LoadFromString<KyExpressionsDriver>);
 BENCHMARK(Test5_LoadFromString<KyExpressionsDriverDD>);
+BENCHMARK(Test5_LoadFromString<ca::CaExpressionsDriver>);
 
 BENCHMARK(Test5_ComputeBOp<AtExpressionsDriver>);
 BENCHMARK(Test5_ComputeBOp<KyExpressionsDriver>);
 BENCHMARK(Test5_ComputeBOp<KyExpressionsDriverDD>);
+BENCHMARK(Test5_ComputeBOp<ca::CaExpressionsDriver>);
 
 BENCHMARK(Test5a_ComputeBOp<AtExpressionsDriver>);
 BENCHMARK(Test5a_ComputeBOp<KyExpressionsDriver>);
 BENCHMARK(Test5a_ComputeBOp<KyExpressionsDriverDD>);
+BENCHMARK(Test5a_ComputeBOp<ca::CaExpressionsDriver>);
 
 BENCHMARK(Test5_ComputeFx<AtExpressionsDriver>);
 BENCHMARK(Test5_ComputeFx<KyExpressionsDriver>);
 BENCHMARK(Test5_ComputeFx<KyExpressionsDriverDD>);
+BENCHMARK(Test5_ComputeFx<ca::CaExpressionsDriver>);
 
 BENCHMARK(Test5_AsString<AtExpressionsDriver>);
 BENCHMARK(Test5_AsString<KyExpressionsDriver>);
 BENCHMARK(Test5_AsString<KyExpressionsDriverDD>);
+BENCHMARK(Test5_AsString<ca::CaExpressionsDriver>);
 
 BENCHMARK(Test6_ComputeBOp<AtExpressionsDriver>);
 BENCHMARK(Test6_ComputeBOp<KyExpressionsDriver>);
 BENCHMARK(Test6_ComputeBOp<KyExpressionsDriverDD>);
+BENCHMARK(Test6_ComputeBOp<ca::CaExpressionsDriver>);
 
 BENCHMARK(Test6_ComputeFx<AtExpressionsDriver>);
 BENCHMARK(Test6_ComputeFx<KyExpressionsDriver>);
 BENCHMARK(Test6_ComputeFx<KyExpressionsDriverDD>);
+BENCHMARK(Test6_ComputeFx<ca::CaExpressionsDriver>);
 
 BENCHMARK_MAIN();

@@ -6,6 +6,7 @@
 #include "../expressions2/utils.h"
 #include "../ky_expressions/expressions.h"
 #include "../ky_expressions/expressions_dd.h"
+#include "../ca_expressions/expressions.h"
 
 class AtExpressionsDriver {
 public:

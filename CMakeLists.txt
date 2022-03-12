@@ -1,4 +1,5 @@
-cmake_minimum_required(VERSION 3.19)
+#cmake_minimum_required(VERSION 3.19)
+cmake_minimum_required(VERSION 3.17)
 set(CMAKE_CXX_STANDARD 20)
 project(experiments VERSION 0.1.0)
 
@@ -38,6 +39,7 @@ if(CLANG_TIDY)
 endif()
 
 add_subdirectory(ky_expressions)
+add_subdirectory(ca_expressions)
 add_subdirectory(test_expressions)
 
 add_subdirectory(cast_utils)
