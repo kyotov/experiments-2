@@ -7,6 +7,7 @@
 #include <iostream>
 #include <limits>
 #include <memory>
+#include <optional>
 #include <stdexcept>
 #include <type_traits>
 
@@ -16,6 +17,15 @@ using namespace ca;
 
 static const bool debug_print = false;
 static const bool fastpath_exceptions = false;
+
+enum struct Implementation : short {
+	Recursive,
+	EvaluateOnStack,
+	EvaluateOnHeap,
+};
+
+//static const Implementation implementation = Implementation::EvaluateOnStack;
+static const Implementation implementation = Implementation::EvaluateOnHeap;
 
 template <typename T>
 using Uninited = char;
@@ -502,7 +512,7 @@ Expr CaExpressionsDriver::Load(std::istream& s) {
 }
 
 template <typename T, void (*F)(const Op*, const T*, Uninited<T>*)>
-void Evaluate(const Op** op, Uninited<T>* res) {
+void EvaluateOnStack(const Op** op, Uninited<T>* res) {
 	const Op* curr_op = *op;
 	const size_t args_needed = ops::eval_args(curr_op);
 
@@ -521,7 +531,7 @@ void Evaluate(const Op** op, Uninited<T>* res) {
 		if (arg_args_needed == 0) {
 			F(*op, nullptr, args_space+args_found*sizeof(T));
 		} else {
-			Evaluate<T, F>(op, args_space+args_found*sizeof(T));
+			EvaluateOnStack<T, F>(op, args_space+args_found*sizeof(T));
 		}
 	}
 
@@ -536,24 +546,96 @@ void Evaluate(const Op** op, Uninited<T>* res) {
 	}
 }
 
+struct OprPos {
+	Op op;
+	size_t idx;
+};
+
+char heap_lit_raw[16*1024*1024];
+OprPos heap_opr[16*1024*1024];
+
+template <typename T, void (*F)(const Op*, const T*, Uninited<T>*)>
+T EvaluateOnHeap(const Expr* input) {
+	T* heap_lit = std::launder(reinterpret_cast<T*>(heap_lit_raw));
+	const size_t heap_lit_size = sizeof(heap_lit_raw)/sizeof(*heap_lit);
+	const size_t heap_opr_size = sizeof(heap_opr)/sizeof(*heap_opr);
+	if (input->size() > heap_lit_size) throw std::domain_error("increase default heap_lit size");
+	if (input->size() > heap_opr_size) throw std::domain_error("increase default heap_opr size");
+
+	const Op* op = input->data();
+	size_t opr_idx = 0;
+	size_t lit_idx = 0;
+	do {
+		if (ops::eval_args(op) == 0) {
+			F(op, nullptr, cast(reinterpret_cast<char*>(heap_lit+(lit_idx++))));
+			//std::cout << "added lit " << *op << std::endl;
+		} else {
+			heap_opr[opr_idx++] = {*op, lit_idx++};
+			//std::cout << "added opr " << *op << std::endl;
+		}
+
+		while (opr_idx > 0) {
+			const OprPos opr = heap_opr[opr_idx-1];
+			const size_t argc = ops::eval_args(&opr.op);
+			if (lit_idx <= opr.idx + argc) break;
+
+			F(&opr.op, heap_lit+opr.idx+1, cast(reinterpret_cast<char*>(heap_lit+opr.idx)));
+			//std::cout << "exec " << heap_lit[opr.idx] << std::endl;
+			lit_idx -= argc;
+			if (!std::is_trivially_destructible<T>::value) std::destroy_n(heap_lit+lit_idx, argc);
+			--opr_idx;
+		}
+
+		++op;
+	} while (opr_idx != 0);
+	if (lit_idx != 1) {
+		throw std::invalid_argument("reached end of operators with operands left");
+	}
+	if (op != input->data() + input->size()) {
+		throw std::invalid_argument("used less or more operators than given");
+	}
+	//std::cout << "done" << std::endl;
+	T result = heap_lit[0];
+	std::destroy_n(heap_lit, lit_idx);
+	return result;
+}
+
 int CaExpressionsDriver::Compute(Expr &input) {
 	const Op* op = input.data();
 	if (fastpath_exceptions && input.empty()) return 0;
 
-	int result;
-	Evaluate<int, ops::compute>(&op, cast(&result));
-	return result;
-	//return ops::compute(&op);
+	switch (implementation) {
+		case Implementation::EvaluateOnStack: {
+			int result;
+			EvaluateOnStack<int, ops::compute>(&op, cast(&result));
+			return result;
+		}
+		case Implementation::EvaluateOnHeap: {
+			return EvaluateOnHeap<int, ops::compute>(&input);
+		}
+		case Implementation::Recursive: {
+			return ops::compute(&op);
+		}
+		default: throw 0;
+	}
 }
 
 std::string CaExpressionsDriver::AsString(Expr &input) {
 	const Op* op = input.data();
 	if (fastpath_exceptions && input.empty()) return 0;
 
-	std::string result;
-	Evaluate<std::string, ops::string_infix>(&op, cast(&result));
-	return result;
-	//return ops::string_infix(&op);
+	switch (implementation) {
+		case Implementation::EvaluateOnHeap:
+		case Implementation::EvaluateOnStack: {
+			std::string result;
+			EvaluateOnStack<std::string, ops::string_infix>(&op, cast(&result));
+			return result;
+		}
+		case Implementation::Recursive: {
+			return ops::string_infix(&op);
+		}
+		default: throw 0;
+	}
 }
 
 void CaExpressionsDriver::Save(Expr& input, std::ostream &s) {
