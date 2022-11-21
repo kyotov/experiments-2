@@ -4,6 +4,7 @@
 // cmake -B build -DCMAKE_BUILD_TYPE=Release
 // clear && cmake --build ./build --config Release --target all && build/test_expressions/benchmark_expressions
 
+#include <algorithm>
 #include <iostream>
 #include <limits>
 #include <memory>
@@ -72,7 +73,8 @@ namespace ca::ops::literal {
 	}
 	static void string_infix(const Op* op, const std::string* args, Uninited<std::string>* res) {
 		(void)args;
-		emplace<std::string>(res, "(" + std::to_string(op->data.literal.number) + ")");
+		std::string num = std::to_string(op->data.literal.number);
+		emplace<std::string>(res, "(" + num + ")");
 	}
 	static std::string string_save(const Op** op) {
 		return "C " + std::to_string((*op)->data.literal.number);
@@ -551,6 +553,8 @@ struct OprPos {
 	size_t idx;
 };
 
+// In a real example, we'd just want to pass a scratch buffer around
+// instead of having a global memory location.
 char heap_lit_raw[16*1024*1024];
 OprPos heap_opr[16*1024*1024];
 
